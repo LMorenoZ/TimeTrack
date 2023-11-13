@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "967500585718",
+    "project_id": "timetrack-db-e32ed",
+    "storage_bucket": "timetrack-db-e32ed.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:967500585718:android:0066e419d6e15777286ad7",
+        "android_client_info": {
+          "package_name": "sv.edu.catolica.timetrack"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "967500585718-orag14kq9ihhaihkpcsde5lgr24uemis.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "sv.edu.catolica.timetrack",
+            "certificate_hash": "aac9ba491cc03f6cc5c4ea36f3d45921463a7b3e"
+          }
+        },
+        {
+          "client_id": "967500585718-u0s110904nb1k4m9nmeaj132jjf5uj33.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDZQ4jKikjpNIiVdV5AxMQmJQ-KmhY7EcQ"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "967500585718-u0s110904nb1k4m9nmeaj132jjf5uj33.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

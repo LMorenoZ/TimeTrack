@@ -1,17 +1,22 @@
 package sv.edu.catolica.timetrack;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentTransaction;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.TextUtils;
+import android.util.AttributeSet;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
@@ -20,12 +25,18 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private DrawerLayout drawerLayout;
     private HomeFragment frag;
-
+    private TextView correoUsuario;
     private FirebaseAuth mAuth;
+
 //    private GoogleSignInClient mGoogleSignInClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,6 +50,26 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
         drawerLayout = findViewById(R.id.drawer_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
+
+        // Colocando el correo del usuario activo y la fecha
+        try {
+            // Correo
+            View headerLayout = navigationView.getHeaderView(0);
+            correoUsuario = headerLayout.findViewById(R.id.tvBienvenida);
+
+            mAuth = FirebaseAuth.getInstance();
+            FirebaseUser currentUser = mAuth.getCurrentUser();
+            correoUsuario.setText(currentUser.getEmail());
+
+            // Fecha
+            String fechaActual = obtenerFechaActual();
+            TextView textViewFecha = headerLayout.findViewById(R.id.tvCorreo);
+            textViewFecha.setText(fechaActual);
+
+        } catch (Exception e) {
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
+        }
+
         navigationView.setNavigationItemSelectedListener(this);
 
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_nav, R.string.close_nav);
@@ -52,9 +83,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
             navigationView.setCheckedItem(R.id.nav_home);
         }
-
-
     }
+
+    private String obtenerFechaActual() {
+        // Obtiene la fecha actual
+        Calendar calendar = Calendar.getInstance();
+
+        // Define el formato deseado ("EEEE d 'de' MMMM 'de' yyyy")
+        SimpleDateFormat formatoFecha = new SimpleDateFormat("EEEE d 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
+
+        // Formatea la fecha según el patrón
+        String fechaEnString = formatoFecha.format(calendar.getTime());
+        fechaEnString = Character.toUpperCase(fechaEnString.charAt(0)) + fechaEnString.substring(1);
+        return fechaEnString;
+    }
+
+
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
 

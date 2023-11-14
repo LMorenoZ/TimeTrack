@@ -16,18 +16,20 @@
         android:src="@drawable/aklogo" />
 
     <TextView
+        android:id="@+id/tvBienvenida"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Android Knowledge"
+        android:text="Hola, bienvenid@!!"
         android:textColor="@color/white"
         android:textStyle="bold" />
 
     <TextView
+        android:id="@+id/tvCorreo"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:text="contact@androidknowledge.com"
         android:textColor="@color/white"
-        android:textSize="14sp"
-        android:layout_marginBottom="16dp" />
+        android:textSize="14sp" />
 
 </LinearLayout>

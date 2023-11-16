@@ -32,9 +32,11 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import java.lang.reflect.Method;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 import sv.edu.catolica.timetrack.R;
 import sv.edu.catolica.timetrack.Interfaces.OnDialogCloseListener;
@@ -127,6 +129,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 DatePickerDialog datePickerDialog = new DatePickerDialog(context, new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+                        month += 1;
                         setDueDate.setText(dayOfMonth + "/" + month + "/" + year);
                         dueDate = dayOfMonth + "/" + month + "/" + year;
                     }
@@ -147,37 +150,12 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
                 String task = mTaskEdit.getText().toString();
 
-
                 if (finalIsUpdate) { // para actualizar la tarea
-//                    firestore.collection(usuarioId).document(id).update(
-//                            "task", task,
-//                            "due", dueDate
-//                    );
-//                    Toast.makeText(context, "Tarea actualizada", Toast.LENGTH_SHORT).show();
-
-
                     firestore.collection(usuarioId).document(id).update(
                             "task", task,
                             "due", dueDate
-                    ).addOnCompleteListener(new OnCompleteListener<Void>() {
-                        @Override
-                        public void onComplete(@NonNull Task<Void> task) {
-                            if (task.isSuccessful()) {
-                                Toast.makeText(context, "Se actualizó", Toast.LENGTH_SHORT).show();
-                            } else {
-                                Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                            }
-                            dismiss();
-                        }
-                    }).addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(context, e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
-
-
-
+                    );
+                    Toast.makeText(context, "Tarea actualizada", Toast.LENGTH_SHORT).show();
                 } else {  // para crear la tarea
                     if (task.isEmpty()) {
                         Toast.makeText(context, "No se permiten actividades en blanco", Toast.LENGTH_SHORT).show();
@@ -214,18 +192,16 @@ public class AddNewTask extends BottomSheetDialogFragment {
     @Override
     public void onAttach(@NonNull Context context) {
         super.onAttach(context);
-//        this.context = context;
-        this.context = getContext();
+        this.context = context;
     }
 
     @Override
     public void onDismiss(@NonNull DialogInterface dialog) {
         super.onDismiss(dialog);
-//        Activity activity = getActivity();
         Fragment activity = getParentFragment();
+
         if (activity instanceof OnDialogCloseListener) {
-            Toast.makeText(context, "Cerrando", Toast.LENGTH_SHORT).show();
-            ((OnDialogCloseListener) activity).onDialogClose(dialog);
+            ((OnDialogCloseListener)activity).onDialogClose(dialog);
         }
     }
 }

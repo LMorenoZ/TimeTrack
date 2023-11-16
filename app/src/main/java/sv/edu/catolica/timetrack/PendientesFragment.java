@@ -77,7 +77,7 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
         adapter = new ToDoAdapter(getActivity(), mList);
 
         // Aniadiendo el efecto de editar y borrar al deslizar en el elemeto del recyclerview
-        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TouchHelper(adapter));
+        ItemTouchHelper itemTouchHelper = new ItemTouchHelper(new TouchHelper(adapter, this));
         itemTouchHelper.attachToRecyclerView(mRecyclerViewPendientes);
 
         // Llamando los datos desde Firestore y actualizando el adaptador del recyclerview
@@ -92,7 +92,7 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
         usuarioId = currentUser.getUid();
 
         // llamada a firestore para traer las tareas
-        query = firestore.collection(usuarioId).orderBy("time", Query.Direction.DESCENDING);
+        query = firestore.collection(usuarioId).orderBy("due", Query.Direction.DESCENDING);
         listenerRegistration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {

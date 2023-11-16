@@ -8,20 +8,25 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.FragmentActivity;
+import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 import sv.edu.catolica.timetrack.Adapter.ToDoAdapter;
 import sv.edu.catolica.timetrack.Interfaces.OnDialogCloseListener;
+import sv.edu.catolica.timetrack.PendientesFragment;
 import sv.edu.catolica.timetrack.R;
 
 public class TouchHelper extends ItemTouchHelper.SimpleCallback {
     private ToDoAdapter adapter;
+    private PendientesFragment fragment;
 
-    public TouchHelper(ToDoAdapter adapter) {
+    public TouchHelper(ToDoAdapter adapter, PendientesFragment fragment) {
         super(0, ItemTouchHelper.LEFT | ItemTouchHelper.RIGHT);
         this.adapter = adapter;
+        this.fragment = fragment;
     }
 
     @Override
@@ -44,14 +49,21 @@ public class TouchHelper extends ItemTouchHelper.SimpleCallback {
                         }
                     }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
                         @Override
-                        public void onClick(DialogInterface dialogInterface, int i) {
+                        public void onClick(DialogInterface dialogInterface, int i) {  }
+                    }).setOnDismissListener(new DialogInterface.OnDismissListener() {
+                        @Override
+                        public void onDismiss(DialogInterface dialogInterface) {
+                            Toast.makeText(adapter.getContext(), "Hola", Toast.LENGTH_SHORT).show();
                             adapter.notifyItemChanged(position);
                         }
                     });
+
             AlertDialog dialog = builder.create();
             dialog.show();
         } else {
-            adapter.editTask(position);
+            adapter.editTask(position, fragment);
+            
+//            adapter.notifyItemChanged(position);
         }
     }
     

@@ -9,23 +9,23 @@
         android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:icon="@drawable/nav_home"
-            android:title="Home"/>
+            android:icon="@drawable/ic_baseline_school_24"
+            android:title="Tareas"/>
 
         <item
             android:id="@+id/nav_settings"
-            android:icon="@drawable/nav_settings"
-            android:title="Settings"/>
+            android:icon="@drawable/ic_baseline_calendar_month_24"
+            android:title="Recordatorios"/>
 
         <item
             android:id="@+id/nav_share"
-            android:icon="@drawable/nav_share"
-            android:title="Share"/>
+            android:icon="@drawable/ic_baseline_access_time_24"
+            android:title="Sesión de estudio"/>
 
         <item
             android:id="@+id/nav_about"
             android:icon="@drawable/nav_about"
-            android:title="About Us"/>
+            android:title="Acerca de"/>
     </group>
 
     <item android:title="">
@@ -33,7 +33,7 @@
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/nav_logout"
-                android:title="Logout"
+                android:title="Cerrar sesión"
                 />
         </menu>
     </item>

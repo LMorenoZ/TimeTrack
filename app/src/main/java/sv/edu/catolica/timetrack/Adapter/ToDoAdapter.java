@@ -13,9 +13,13 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -35,6 +39,9 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
     private FirebaseFirestore firestore;
     private String usuarioId;
     private FirebaseAuth mAuth;
+
+
+    private int beforeDeleteElements;
 
     public ToDoAdapter(FragmentActivity fragmentActivity, List<ToDoModel> todoList) {
         this.todoList = todoList;
@@ -68,7 +75,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         return activity;
     }
 
-    public void editTask (int position, PendientesFragment fragment) {
+    public void editTask (int position, Fragment fragment) {
         ToDoModel toDoModel = todoList.get(position);
 
         Bundle bundle = new Bundle();
@@ -84,30 +91,58 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         addNewTask.setArguments(bundle);
 
         addNewTask.show(fragment.getChildFragmentManager(), addNewTask.getTag());
-
     }
 
     @Override
     public void onBindViewHolder(@NonNull MyViewHolder holder, int position) {
+        final int[] elementPosition = {position};
+        beforeDeleteElements = getItemCount();
+
         ToDoModel toDoModel = todoList.get(position);
         holder.mCheckBox.setText(toDoModel.getTask());
         holder.mCheckBox.setChecked(toBoolean(toDoModel.getStatus()));
         holder.mDueDateTv.setText("Programada en " + toDoModel.getDue());
-        int elementPosition = position;
 
         holder.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 // Modifica el checkbox cuando el usuario toca la cajita
-                if (isChecked) {
-                    firestore.collection(usuarioId).document(toDoModel.TaskId).update("status", 1);
-                    Toast.makeText(activity, "Tarea movida a completados", Toast.LENGTH_SHORT).show();
+                int nuevoStatus;  // 1: checked, 0: not checked
 
-                    todoList.remove(elementPosition);
-                    notifyItemRemoved(elementPosition);
-                } else {
-                    firestore.collection(usuarioId).document(toDoModel.TaskId).update("status", 0);
-                }
+
+                nuevoStatus = isChecked == true ? 1 : 0;
+
+                try {
+                    firestore.collection(usuarioId).document(toDoModel.TaskId).update("status", nuevoStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+//                      TODO: Toast.makeText(activity, "Tarea movida a completados", Toast.LENGTH_SHORT).show();
+                                try {
+                                    if (task.isSuccessful()) {
+                                        Toast.makeText(activity, "Se marco", Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(activity, "", Toast.LENGTH_SHORT).show();
+                                        if (beforeDeleteElements > elementPosition[0]) {
+                                            todoList.remove(elementPosition[0]);
+                                            notifyItemRemoved(elementPosition[0]);
+                                        }
+                                        todoList.remove(elementPosition[0]);
+                                        notifyItemRemoved(elementPosition[0]);
+                                    } else {
+                                        Toast.makeText(activity, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                    }
+                                } catch (Exception e) {
+                                    Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                                }
+                            }
+                        }).addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+                        });
+                    } catch (Exception e) {
+                        Toast.makeText(activity, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
             }
         });
     }

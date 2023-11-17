@@ -16,6 +16,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -39,7 +42,7 @@ import sv.edu.catolica.timetrack.Class.TouchHelper;
 import sv.edu.catolica.timetrack.Interfaces.OnDialogCloseListener;
 import sv.edu.catolica.timetrack.Model.ToDoModel;
 
-public class PendientesFragment extends Fragment implements OnDialogCloseListener {
+public class PendientesFragment extends Fragment implements OnDialogCloseListener, ToDoAdapter.OnItemClickListener {
 
     private RecyclerView mRecyclerViewPendientes;
     private FloatingActionButton mFabPendiente;
@@ -91,6 +94,7 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
 
         traerDB();
         mRecyclerViewPendientes.setAdapter(adapter);
+        adapter.setOnItemClickListener(this);
     }
 
     @Override
@@ -162,5 +166,38 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
                 Toast.makeText(getContext(), tarea.getException().toString(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onItemClick(int position, boolean isChecked) {
+        int nuevoStatus = 0;
+        int elementoPosicion = position;
+
+        nuevoStatus = isChecked == true ? 1 : 0;
+
+        Toast.makeText(getContext(), "Status: " + String.valueOf(nuevoStatus) + "\nPosicion: " + String.valueOf(elementoPosicion), Toast.LENGTH_SHORT).show();
+
+
+        try {
+            firestore.collection(usuarioId).document(mList.get(elementoPosicion).TaskId).update("status", nuevoStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()) {
+//                        mList.remove(elementoPosicion);
+                        adapter.notifyItemRemoved(elementoPosicion);
+                    } else {
+                        Toast.makeText(getContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception e) {
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (Exception e) {
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
     }
 }

@@ -11,9 +11,12 @@ import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -26,6 +29,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment;
+import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
@@ -33,8 +37,10 @@ import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 
@@ -46,12 +52,16 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
     private TextView setDueDate;
     private EditText mTaskEdit;
+    private Spinner mSpTipo;
+    private String opcionElegida = "";
     private Button mSaveBtn;
     private FirebaseFirestore firestore;
     private FirebaseAuth mAuth;
     private String usuarioId;
     private Context context;
     private String dueDate = "";
+    private Timestamp limitDate; // timestamp de firebase equivalente a la fecha elegida por el datepickerdialog
+    private Timestamp limitDateUpdate;
     private String id = "";
     private String dueDateUpdate = "";
 
@@ -65,15 +75,48 @@ public class AddNewTask extends BottomSheetDialogFragment {
         return inflater.inflate(R.layout.add_new_task, container, false);
     }
 
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         setDueDate = view.findViewById(R.id.tv_set_due);
         mTaskEdit = view.findViewById(R.id.et_task);
+        mSpTipo = view.findViewById(R.id.spTipo);
         mSaveBtn = view.findViewById(R.id.save_btn);
 
+        // Array para popular el spinner
+        List<String> actividadesTipos = new ArrayList<>();
+        actividadesTipos.add("Examen escrito");
+        actividadesTipos.add("Guía de estudios");
+        actividadesTipos.add("Exposición");
+        actividadesTipos.add("Actividad práctica");
+        actividadesTipos.add("Otras actividades");
+
+        // Se creay un adaptador para el spinner y se elige el layout a utilizar
+        ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, actividadesTipos);
+
+        // Especifica el layout a utilizar cuando se despliega el listado de opciones
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Aplica el adapter al spinner
+        mSpTipo.setAdapter(adapterSpinner);
+
+        // Captura el valor seleccionado del Spinner
+        mSpTipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                opcionElegida = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {  }
+        });
+
+
+        // Obteniendo instancia de Firestore
         firestore = FirebaseFirestore.getInstance();
+
 
         // para identificar si se pretende actualizar elementos en firestore
         boolean isUpdate = false;
@@ -83,22 +126,27 @@ public class AddNewTask extends BottomSheetDialogFragment {
             String task = bundle.getString("task");
             id = bundle.getString("id");
             dueDateUpdate = bundle.getString("due");
+            opcionElegida = bundle.getString("type");
+            // Reconstruyendo el timestamp
+            long limitDateSec = bundle.getLong("limitDateSec");
+            int limitDateNano = bundle.getInt("limitDateNano");
+            limitDateUpdate = new Timestamp(limitDateSec, limitDateNano);
 
+            mSpTipo.setSelection(actividadesTipos.indexOf(opcionElegida));
             mTaskEdit.setText(task);
-            setDueDate.setText(dueDateUpdate);
+            setDueDate.setText("Agendado para: " + dueDateUpdate);
 
-            if (task.length() > 0) {  // validacion para no actualizar el mismo texto
-                mSaveBtn.setEnabled(false);
-                mSaveBtn.setBackgroundColor(Color.GRAY);
-            }
+//          TODO: Descomentar esto antes de version final
+//            if (task.length() > 0) {  // validacion para no actualizar el mismo texto
+//                mSaveBtn.setEnabled(false);
+//                mSaveBtn.setBackgroundColor(Color.GRAY);
+//            }
         }
 
         // Comprueba que no se intente crear una tarea con el titulo vacio
         mTaskEdit.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) { }
 
             @Override
             public void onTextChanged(CharSequence c, int i, int i1, int i2) {
@@ -112,10 +160,17 @@ public class AddNewTask extends BottomSheetDialogFragment {
             }
 
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable editable) {  }
         });
+
+        // para poder hacer actualizaciones
+        boolean finalIsUpdate = isUpdate;
+
+        // actualizando la fecha
+        if (finalIsUpdate) {
+            dueDate = dueDateUpdate;
+            limitDate = limitDateUpdate;
+        }
 
         setDueDate.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -132,14 +187,16 @@ public class AddNewTask extends BottomSheetDialogFragment {
                         month += 1;
                         setDueDate.setText(dayOfMonth + "/" + month + "/" + year);
                         dueDate = dayOfMonth + "/" + month + "/" + year;
+
+                        // Capturan y convirtiendo la fecha seleccionada en un valor timestamp de firestore
+                        calendar.set(year, month - 1, dayOfMonth);
+                        limitDate = new Timestamp(calendar.getTime());
                     }
                 }, YEAR, MONTH, DATE);
-
                 datePickerDialog.show();
             }
         });
 
-        boolean finalIsUpdate = isUpdate;
         mSaveBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -153,7 +210,9 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 if (finalIsUpdate) { // para actualizar la tarea
                     firestore.collection(usuarioId).document(id).update(
                             "task", task,
-                            "due", dueDate
+                            "due", dueDate,
+                            "type", opcionElegida,
+                            "limitDate", limitDate
                     );
                     Toast.makeText(context, "Tarea actualizada", Toast.LENGTH_SHORT).show();
                 } else {  // para crear la tarea
@@ -165,7 +224,8 @@ public class AddNewTask extends BottomSheetDialogFragment {
                         taskMap.put("task", task);
                         taskMap.put("due", dueDate);
                         taskMap.put("status", 0);
-                        taskMap.put("time", FieldValue.serverTimestamp());
+                        taskMap.put("type", opcionElegida);
+                        taskMap.put("limitDate", limitDate);
 
                         firestore.collection(usuarioId).add(taskMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override

@@ -92,7 +92,7 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
         usuarioId = currentUser.getUid();
 
         // llamada a firestore para traer las tareas
-        query = firestore.collection(usuarioId).orderBy("due", Query.Direction.DESCENDING);
+        query = firestore.collection(usuarioId).orderBy("limitDate", Query.Direction.DESCENDING);
         listenerRegistration = query.addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
@@ -101,8 +101,12 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
                         String id = documentChange.getDocument().getId();
                         ToDoModel toDoModel = documentChange.getDocument().toObject(ToDoModel.class).withId(id);
 
-                        mList.add(toDoModel);  // se aniade el elemento a la lista del adaptador
-                        adapter.notifyDataSetChanged();  // el adaptador actualiza su respectivo recyclerview
+//                        mList.add(toDoModel);  // se aniade el elemento a la lista del adaptador
+//                        adapter.notifyDataSetChanged();  // el adaptador actualiza su respectivo recyclerview
+                        if (toDoModel.getStatus() == 0) {
+                            mList.add(toDoModel);  // se aniade el elemento a la lista del adaptador
+                            adapter.notifyDataSetChanged();  // el adaptador actualiza su respectivo recyclerview
+                        }
                     }
                 }
                 listenerRegistration.remove();

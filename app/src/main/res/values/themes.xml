@@ -5,10 +5,8 @@
          <item name="colorPrimary">@color/lavender</item>
 <!--         <item name="colorPrimaryVariant">@color/lavender</item>-->
          <item name="colorPrimaryVariant">@color/dark_blue</item>
-    </style>
 
-    <style name="BottomSheetDialogTheme" parent="Theme.Design.BottomSheetDialog">
-        <item name="android:windowSoftInputMode">adjustPan</item>
+<!--        <item name="android:windowSoftInputMode">adjustResize</item>-->
     </style>
 
     <style name="Theme.TimeTrack" parent="Base.Theme.TimeTrack" />

@@ -61,6 +61,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         todoList.remove(position);
 
         notifyItemRemoved(position);
+        Toast.makeText(activity, "La tarea se borró correctamente", Toast.LENGTH_SHORT).show();
     }
 
     public Context getContext() {
@@ -73,12 +74,15 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         Bundle bundle = new Bundle();
         bundle.putString("task", toDoModel.getTask());
         bundle.putString("due", toDoModel.getDue());
+        bundle.putString("type", toDoModel.getType());
         bundle.putString("id", toDoModel.TaskId);
+        // Conviertiendo el timestamp "limitDate"
+        bundle.putLong("limitDateSec", toDoModel.getLimitDate().getSeconds());  // segundos del timestamp
+        bundle.putInt("limitDateNano", toDoModel.getLimitDate().getNanoseconds()); // nanosegundos del timestamp
 
         AddNewTask addNewTask = new AddNewTask();
         addNewTask.setArguments(bundle);
 
-//        addNewTask.show(activity.getSupportFragmentManager(), addNewTask.getTag());
         addNewTask.show(fragment.getChildFragmentManager(), addNewTask.getTag());
 
     }
@@ -89,13 +93,18 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         holder.mCheckBox.setText(toDoModel.getTask());
         holder.mCheckBox.setChecked(toBoolean(toDoModel.getStatus()));
         holder.mDueDateTv.setText("Programada en " + toDoModel.getDue());
+        int elementPosition = position;
 
         holder.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean isChecked) {
                 // Modifica el checkbox cuando el usuario toca la cajita
                 if (isChecked) {
-                    firestore.collection(usuarioId).document(toDoModel.TaskId).update("staus", 1);
+                    firestore.collection(usuarioId).document(toDoModel.TaskId).update("status", 1);
+                    Toast.makeText(activity, "Tarea movida a completados", Toast.LENGTH_SHORT).show();
+
+                    todoList.remove(elementPosition);
+                    notifyItemRemoved(elementPosition);
                 } else {
                     firestore.collection(usuarioId).document(toDoModel.TaskId).update("status", 0);
                 }

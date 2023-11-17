@@ -11,10 +11,11 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
+        android:textSize="16sp"
         android:backgroundTint="@color/green_blue"
         android:hint="Nombre de la tarea"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintHorizontal_bias="0.842"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -22,11 +23,11 @@
         android:id="@+id/tv_set_due"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="8dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
         android:drawableRight="@drawable/ic_baseline_calendar_today_24"
         android:drawablePadding="8dp"
-        android:text="Agendar para"
+        android:text="Agendar para..."
         android:textColor="@color/green_blue"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -36,11 +37,36 @@
         android:id="@+id/save_btn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
+        android:background="@color/lavender"
+        android:textColor="@color/white"
+        android:layout_marginTop="10dp"
+        android:layout_marginEnd="16dp"
         android:text="Guardar"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/spTipo" />
+
+    <Spinner
+        android:id="@+id/spTipo"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="42dp"
+        android:layout_marginEnd="16dp"
+        android:tooltipText="Elija"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/et_task" />
+
+    <TextView
+        android:id="@+id/textView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="10dp"
+        android:text="Tipo de actividad: "
+        android:textColor="@color/green_blue"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/tv_set_due" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

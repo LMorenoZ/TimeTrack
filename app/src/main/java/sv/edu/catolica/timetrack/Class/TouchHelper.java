@@ -53,7 +53,6 @@ public class TouchHelper extends ItemTouchHelper.SimpleCallback {
                     }).setOnDismissListener(new DialogInterface.OnDismissListener() {
                         @Override
                         public void onDismiss(DialogInterface dialogInterface) {
-                            Toast.makeText(adapter.getContext(), "Hola", Toast.LENGTH_SHORT).show();
                             adapter.notifyItemChanged(position);
                         }
                     });

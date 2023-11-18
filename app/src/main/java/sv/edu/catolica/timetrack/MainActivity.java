@@ -1,19 +1,14 @@
 package sv.edu.catolica.timetrack;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.text.TextUtils;
-import android.util.AttributeSet;
-import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
@@ -25,7 +20,6 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -101,25 +95,30 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
 
     @Override
     public boolean onNavigationItemSelected(@NonNull MenuItem item) {
-
-        int itemId = item.getItemId();
+         int itemId = item.getItemId();
 
         try {
             if (itemId == R.id.nav_home) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, frag).commit();
+                if (frag != null) {
+                    // recupera el fragment del viewpager previamente seleccionado, ya sea en "Pendientes" o "Completadas"
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, frag).commit();
+                } else {
+                    // crea de nuevo el fragment del viewpager y lo asigna al fragment "pendiente"
+                    getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+                }
+//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
+
             } else if (itemId == R.id.nav_settings) {
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new SettingsFragment()).commit();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RecordatoriosFragment()).commit();
             } else if (itemId == R.id.nav_share) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new ShareFragment()).commit();
             } else if (itemId == R.id.nav_about) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();
             } else if (itemId == R.id.nav_logout) {
                 logout();
-//            Toast.makeText(this, "Logout!", Toast.LENGTH_SHORT).show();
-            } else {
             }
         } catch (Exception e) {
-            Toast.makeText(this, e.getMessage() + "\n" + e.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
         }
 
         drawerLayout.closeDrawer(GravityCompat.START);

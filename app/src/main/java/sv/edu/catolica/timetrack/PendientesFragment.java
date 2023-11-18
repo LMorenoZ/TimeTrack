@@ -64,6 +64,7 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+
         mRecyclerViewPendientes = view.findViewById(R.id.rvPendientes);
         mFabPendiente = view.findViewById(R.id.fabPendientes);
         firestore = FirebaseFirestore.getInstance();
@@ -179,7 +180,8 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
 
 
         try {
-            firestore.collection(usuarioId).document(mList.get(elementoPosicion).TaskId).update("status", nuevoStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
+            firestore.collection(usuarioId).document(mList.get(elementoPosicion).TaskId)
+                    .update("status", nuevoStatus, "reminder", "").addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
                 public void onComplete(@NonNull Task<Void> task) {
                     if (task.isSuccessful()) {

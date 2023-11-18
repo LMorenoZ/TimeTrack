@@ -219,13 +219,33 @@ public class AddNewTask extends BottomSheetDialogFragment {
                     if (task.isEmpty()) {
                         Toast.makeText(context, "No se permiten actividades en blanco", Toast.LENGTH_SHORT).show();
                     } else {
+                        // generando un entero del instante, a manera de id, para identificar su respectiva notificacion AlarmManager
+                        // Obtener la fecha y hora actual del sistema
+                        Calendar calendario = Calendar.getInstance();
+
+                        // Obtener el año, mes, día, hora, minutos y segundos
+                        int año = calendario.get(Calendar.YEAR);
+                        int mes = calendario.get(Calendar.MONTH) + 1; // Los meses empiezan en 0, por eso se suma 1
+                        int dia = calendario.get(Calendar.DAY_OF_MONTH);
+                        int hora = calendario.get(Calendar.HOUR_OF_DAY);
+                        int minutos = calendario.get(Calendar.MINUTE);
+                        int segundos = calendario.get(Calendar.SECOND);
+
+                        // Combinar los valores en un solo entero (formato AAAAMMDDHHmmss)
+                        int dateTimeEntero = año * 100000000 + mes * 1000000 + dia * 10000 + hora * 100 + minutos * 1 + segundos;
+
+
+                        // Estableiendo los campos y valores del documento a crear
                         Map<String, Object> taskMap = new HashMap<>();
 
                         taskMap.put("task", task);
                         taskMap.put("due", dueDate);
                         taskMap.put("status", 0);
                         taskMap.put("type", opcionElegida);
+                        taskMap.put("reminder", "");
                         taskMap.put("limitDate", limitDate);
+                        taskMap.put("idInt", dateTimeEntero);
+
 
                         firestore.collection(usuarioId).add(taskMap).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
                             @Override

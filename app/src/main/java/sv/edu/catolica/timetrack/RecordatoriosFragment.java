@@ -1,7 +1,14 @@
 package sv.edu.catolica.timetrack;
 
+import android.app.AlarmManager;
 import android.app.DatePickerDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 
@@ -33,8 +40,8 @@ import java.util.List;
 import java.util.Locale;
 
 import sv.edu.catolica.timetrack.Adapter.ReminderAdapter;
+import sv.edu.catolica.timetrack.Class.AlarmReceiver;
 import sv.edu.catolica.timetrack.Model.ReminderModel;
-import sv.edu.catolica.timetrack.Model.ToDoModel;
 
 public class RecordatoriosFragment extends Fragment implements ReminderAdapter.OnItemClickListener {
     private RecyclerView mRecyclerViewReminder;
@@ -44,6 +51,8 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
     private FirebaseAuth mAuth;
     private ReminderAdapter adapter;
     private List<ReminderModel> mList;
+    private AlarmManager alarmManager;
+    private PendingIntent pendingIntent;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -55,6 +64,9 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        // Para poder establcer notificaciones programadas
+        createNotificationChannel();
 
         firestore = FirebaseFirestore.getInstance();
 
@@ -136,6 +148,7 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
                             reminderModel.setFecha(document.getString("due"));
                             reminderModel.setTipo(document.getString("type"));
                             reminderModel.setHoraNoti(document.getString("reminder"));
+                            reminderModel.setIdInt(Math.toIntExact(document.getLong("idInt")));
 
                             mList.add(reminderModel);  // se aniade el elemento a la lista del adaptador
                             adapter.notifyDataSetChanged();  // el adaptador actualiza su respectivo recyclerview
@@ -172,6 +185,7 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
     public void onItemClick(int position) {
         // Obtener la fecha y hora actuales
         final Calendar calendario = Calendar.getInstance();
+        ReminderModel reminderModel = mList.get(position);
 
         // Crear DatePickerDialog para seleccionar la fecha
         DatePickerDialog datePickerDialog = new DatePickerDialog(
@@ -189,11 +203,9 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
                                 // Acción cuando se elige la hora
                                 calendario.set(Calendar.HOUR_OF_DAY, hourOfDay);
                                 calendario.set(Calendar.MINUTE, minute);
+                                calendario.set(Calendar.SECOND, 0);
+                                calendario.set(Calendar.MILLISECOND, 0);
 
-                                // Ahora tienes el calendario con la fecha y hora seleccionadas
-                                // Puedes usar este calendario para programar tu notificación
-                                // por ejemplo, utilizando AlarmManager
-                                // ...
 
                                 // Formateando la fecha y hora de la notificacion
                                 SimpleDateFormat simpleDateFormat =
@@ -201,13 +213,23 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
                                 String fechaHoraSeleccionada = simpleDateFormat.format(calendario.getTime());
 
                                 // Actualizando el recordatorio
-                                String idDocumento = mList.get(position).TaskId;
+                                String idDocumento = reminderModel.TaskId;
                                 try {
                                     firestore.collection(usuarioId).document(idDocumento)
                                             .update("reminder", fechaHoraSeleccionada).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void unused) {
-                                                    Toast.makeText(getContext(), "Se actualizo el recordatorio", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(getContext(), "Se actualizó el recordatorio", Toast.LENGTH_SHORT).show();
+
+                                                    cancelAlarm(reminderModel.getIdInt()); // si existe una notificacion previa, la borra para solo tener una
+
+                                                    // estableciendo la notificacion
+                                                    Bundle notificationBundle = new Bundle();
+                                                    notificationBundle.putString("Title", reminderModel.getTitulo());
+                                                    notificationBundle.putString("Description", "Actividad agendada para el " + reminderModel.getFecha());
+                                                    notificationBundle.putInt("id", reminderModel.getIdInt());
+
+                                                    setAlarm(calendario, notificationBundle, reminderModel.getIdInt());
                                                 }
                                             }).addOnFailureListener(new OnFailureListener() {
                                                 @Override
@@ -235,5 +257,52 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
 
         // Mostrar el DatePickerDialog para seleccionar la fecha
         datePickerDialog.show();
+    }
+
+    // metodos
+    private void cancelAlarm(int id) {
+        try {
+            Intent intent = new Intent(getContext(), AlarmReceiver.class);
+            pendingIntent = PendingIntent.getBroadcast(getContext(), id, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+
+            if (alarmManager == null) {
+                alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+            }
+
+            alarmManager.cancel(pendingIntent);
+        } catch (Exception e) {
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void setAlarm(Calendar calendario, Bundle notificationBundle, int id) {
+        alarmManager = (AlarmManager) requireContext().getSystemService(Context.ALARM_SERVICE);
+
+        Intent intent = new Intent(getContext(), AlarmReceiver.class);
+        intent.setAction(Long.toString(System.currentTimeMillis()));
+        intent.setData(Uri.parse("custom://notification/" + id)); // URI única
+        intent.putExtra("bundle_notification", notificationBundle);
+
+        // Especificando el contenido de la notificacion
+        pendingIntent = PendingIntent.getBroadcast(
+                getContext(),
+                id,
+                intent,
+                PendingIntent.FLAG_UPDATE_CURRENT);
+
+        alarmManager.setExact(AlarmManager.RTC_WAKEUP, calendario.getTimeInMillis(), pendingIntent);
+    }
+
+    private void createNotificationChannel() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "TimeTrackChannel";
+            String description = "Channel for Alarm Manager";
+            int importance = NotificationManager.IMPORTANCE_HIGH;
+            NotificationChannel channel = new NotificationChannel("timetrack", name, importance);
+            channel.setDescription(description);
+
+            NotificationManager notificationManager = requireContext().getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 }

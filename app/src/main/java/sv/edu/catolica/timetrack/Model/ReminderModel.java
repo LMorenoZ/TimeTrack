@@ -2,6 +2,7 @@ package sv.edu.catolica.timetrack.Model;
 
 public class ReminderModel extends TaskId{
     private String titulo, fecha, tipo, horaNoti;
+    private int idInt;
 
     public String getTitulo() {
         return titulo;
@@ -33,5 +34,13 @@ public class ReminderModel extends TaskId{
 
     public void setHoraNoti(String horaNoti) {
         this.horaNoti = horaNoti;
+    }
+
+    public int getIdInt() {
+        return idInt;
+    }
+
+    public void setIdInt(int idInt) {
+        this.idInt = idInt;
     }
 }

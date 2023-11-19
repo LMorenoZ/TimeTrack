@@ -17,10 +17,15 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/clTask"
+            android:background="@color/light_lavender"
+            android:padding="5dp"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
 
             <com.google.android.material.checkbox.MaterialCheckBox
+                android:textColor="@color/white"
+                android:textStyle="bold"
                 android:id="@+id/cbPendiente"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
@@ -40,6 +45,8 @@
                 android:layout_marginStart="40dp"
                 android:text="13-11-2023"
                 android:textSize="14sp"
+                android:textStyle="italic"
+
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/cbPendiente" />
 

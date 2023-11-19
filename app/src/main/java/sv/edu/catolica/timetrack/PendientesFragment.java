@@ -121,7 +121,12 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
                             String id = documentChange.getDocument().getId();
                             ToDoModel toDoModel = documentChange.getDocument().toObject(ToDoModel.class).withId(id);
 
+                            // TODO: Aqui tengo la posicion del elemento completado
                             // Para determinar que no se dupliquen elementos al actualizar
+//                            Toast.makeText(getContext(), String.valueOf(toDoModel.getStatus()), Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(getContext(), String.valueOf(mList.size()), Toast.LENGTH_SHORT).show();
+
+
                             traerDB();
                         }
                     }
@@ -141,6 +146,7 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
         // Trae los datos desde la DB y los pinta en un recyclerview asociado
         mList.clear();
 
+
         CollectionReference tareasPendientes = firestore.collection(usuarioId);
         tareasPendientes.get().addOnCompleteListener(tarea -> {
             if (tarea.isSuccessful()) {
@@ -148,19 +154,20 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
                     String id = document.getId();
                     ToDoModel toDoModel = document.toObject(ToDoModel.class).withId(id);
 
-                    // Para determinar que no se dupliquen elementos al actualizar
+                    // Para determinar que no se dupliquen elementos al actualizar datos que no sean el status
                     List<String> listaIds = new ArrayList<>();
-                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-                        mList.forEach(documento -> {
-                            listaIds.add(documento.TaskId);
-
-                        });
+                    for (ToDoModel toDo : mList) {
+                        if(toDo.getStatus() == 0) {
+                            listaIds.add(toDo.TaskId);
+                        }
                     }
 
-                    if (!listaIds.contains(id) && (toDoModel.getStatus() == 0) ) { // solo agrega tareas pendientes
+                    if (!listaIds.contains(id) && (toDoModel.getStatus() == 0) ) { // solo agrega tareas pendientes (status = 0)
+//                        Toast.makeText(getContext(), "no deberia aparecer", Toast.LENGTH_SHORT).show();
                         mList.add(toDoModel);  // se aniade el elemento a la lista del adaptador
                         adapter.notifyDataSetChanged();  // el adaptador actualiza su respectivo recyclerview
                     }
+
                 }
 
             } else {
@@ -174,9 +181,9 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
         int nuevoStatus = 0;
         int elementoPosicion = position;
 
-        nuevoStatus = isChecked == true ? 1 : 0;
+        nuevoStatus = isChecked == true ? 1 : 0;  // 0: not checked, 1: checked
 
-        Toast.makeText(getContext(), "Status: " + String.valueOf(nuevoStatus) + "\nPosicion: " + String.valueOf(elementoPosicion), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "Status: " + String.valueOf(nuevoStatus) + "\nPosicion: " + String.valueOf(elementoPosicion), Toast.LENGTH_SHORT).show();
 
 
         try {

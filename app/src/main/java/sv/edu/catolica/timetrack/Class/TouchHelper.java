@@ -75,7 +75,7 @@ public class TouchHelper extends ItemTouchHelper.SimpleCallback {
                 .addSwipeRightActionIcon(R.drawable.ic_delete_24)
                 .addSwipeRightBackgroundColor(Color.RED)
                 .addSwipeLeftActionIcon(R.drawable.ic_edit_24)
-                .addSwipeLeftBackgroundColor(ContextCompat.getColor(adapter.getContext(), R.color.lavender))
+                .addSwipeLeftBackgroundColor(ContextCompat.getColor(adapter.getContext(), R.color.dark_blue))
                 .create()
                 .decorate();
 

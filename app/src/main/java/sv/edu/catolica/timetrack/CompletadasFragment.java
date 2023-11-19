@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -161,7 +162,7 @@ public class CompletadasFragment extends Fragment implements OnDialogCloseListen
 
         nuevoStatus = isChecked == true ? 1 : 0;
 
-        Toast.makeText(getContext(), "Status: " + String.valueOf(nuevoStatus) + "\nPosicion: " + String.valueOf(elementoPosicion), Toast.LENGTH_SHORT).show();
+//        Toast.makeText(getContext(), "Status: " + String.valueOf(nuevoStatus) + "\nPosicion: " + String.valueOf(elementoPosicion), Toast.LENGTH_SHORT).show();
 
 
         try {

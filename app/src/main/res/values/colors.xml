@@ -3,6 +3,8 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="lavender">#8692f7</color>
+    <color name="light_lavender">#b1b9ff</color>
+    <color name="ligh_blue">#88d3f7</color>
     <color name="green_blue">#0A3D62</color>
     <color name="dark_blue">#192A56</color>
     <color name="gray">#808080</color>

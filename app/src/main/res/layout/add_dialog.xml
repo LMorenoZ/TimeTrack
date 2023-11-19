@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_margin="10dp"
         android:padding="10dp"
-        android:hint="Ingrese tiempo"
+        android:hint="Ingrese un tiempo"
         android:gravity="center"
         android:inputType="number"
 

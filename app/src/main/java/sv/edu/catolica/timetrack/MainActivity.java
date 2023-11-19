@@ -2,6 +2,7 @@ package sv.edu.catolica.timetrack;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -9,17 +10,29 @@ import androidx.drawerlayout.widget.DrawerLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.resource.bitmap.CenterCrop;
+import com.bumptech.glide.load.resource.bitmap.CircleCrop;
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
+import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -30,14 +43,16 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
     private HomeFragment frag;
     private TextView correoUsuario;
     private FirebaseAuth mAuth;
+    private ImageView profilePic;
 
-//    private GoogleSignInClient mGoogleSignInClient;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.design_main);
 
+        // obteniendo el id del usuario activo para identificar su db
         mAuth = FirebaseAuth.getInstance();
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -52,8 +67,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             correoUsuario = headerLayout.findViewById(R.id.tvBienvenida);
 
             mAuth = FirebaseAuth.getInstance();
-            FirebaseUser currentUser = mAuth.getCurrentUser();
+            currentUser = mAuth.getCurrentUser();
             correoUsuario.setText(currentUser.getEmail());
+
+            // Imagen de perfil
+            profilePic = headerLayout.findViewById(R.id.userPic);
+            String photoUrl = currentUser.getPhotoUrl().toString();
+
+            if (photoUrl != null) {
+
+                // Ajustando el tamanio de la imagen y pasarsela al imageView por medio de la Biblioteca Glide.
+                Glide.with(this)
+                        .load(photoUrl)
+                        .override(175, 175)
+                        .transform(new CircleCrop())
+                        .into(profilePic);
+            }
 
             // Fecha
             String fechaActual = obtenerFechaActual();
@@ -71,7 +100,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         toggle.syncState();
 
         if (savedInstanceState == null) {
-//            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
             frag = new HomeFragment();
             getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, frag).commit();
 
@@ -115,7 +143,20 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else if (itemId == R.id.nav_about) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new AboutFragment()).commit();
             } else if (itemId == R.id.nav_logout) {
-                logout();
+                // Dialogo de confirmacion
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+                builder.setTitle("Cerrar sesión");
+                builder.setMessage("¿Está seguro que desea salir?");
+
+                builder.setPositiveButton("Confirmar", (dialog, which) -> {
+                    logout();
+                });
+
+                builder.setNegativeButton("Cancelar", (dialog, which) -> { });
+
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
             }
         } catch (Exception e) {
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();

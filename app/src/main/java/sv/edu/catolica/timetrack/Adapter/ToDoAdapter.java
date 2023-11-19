@@ -1,6 +1,7 @@
 package sv.edu.catolica.timetrack.Adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,6 +12,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.RecyclerView;
@@ -90,11 +93,16 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         // Colocar listener para escuchar cuando se toca el checkbox
         holder.mCheckBox.setOnCheckedChangeListener(null); // Para evitar el reciclado de la vista
 
-
         ToDoModel toDoModel = todoList.get(position);
         holder.mCheckBox.setText(toDoModel.getTask());
         holder.mCheckBox.setChecked(toBoolean(toDoModel.getStatus()));
         holder.mDueDateTv.setText("Programada en " + toDoModel.getDue());
+
+        // Pintando el checkbox de un color diferente y quitando la fecha agendada si esta checkeado (= tarea completada)
+        if(holder.mCheckBox.isChecked()) {
+            holder.mDueDateTv.setText("Finalizada");
+            holder.mConstraintLayout.setBackgroundColor(getContext().getResources().getColor(R.color.ligh_blue));
+        }
 
         // Estableciendo el listener para el checkbox
         holder.mCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -119,9 +127,13 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
     public class MyViewHolder extends RecyclerView.ViewHolder {
         TextView mDueDateTv;
         CheckBox mCheckBox;
+
+        ConstraintLayout mConstraintLayout;
+
         public MyViewHolder(@NonNull View itemView) {
             super(itemView);
 
+            mConstraintLayout = itemView.findViewById(R.id.clTask);
             mDueDateTv = itemView.findViewById(R.id.tv_due_date_pendientes);
             mCheckBox = itemView.findViewById(R.id.cbPendiente);
         }

@@ -219,7 +219,7 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
                                             .update("reminder", fechaHoraSeleccionada).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void unused) {
-                                                    Toast.makeText(getContext(), "Se actualizó el recordatorio", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(getContext(), "Se programó una notificación", Toast.LENGTH_SHORT).show();
 
                                                     cancelAlarm(reminderModel.getIdInt()); // si existe una notificacion previa, la borra para solo tener una
 

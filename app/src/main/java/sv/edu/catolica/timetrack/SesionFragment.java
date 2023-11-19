@@ -88,7 +88,7 @@ public class SesionFragment extends Fragment {
             timePause();
             startTimer(pauseOffSet);
 
-            Toast.makeText(getContext(), "15 sec added", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "15 segundos añadidos", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -136,7 +136,7 @@ public class SesionFragment extends Fragment {
                 timePause();
             }
         } else {
-            Toast.makeText(getContext(), "Ingrese tiempo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), "Ingrese un tiempo", Toast.LENGTH_SHORT).show();
         }
     }
 

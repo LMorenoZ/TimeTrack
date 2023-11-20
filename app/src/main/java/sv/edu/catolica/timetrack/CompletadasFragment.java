@@ -137,7 +137,7 @@ public class CompletadasFragment extends Fragment implements OnDialogCloseListen
     private void traerDB() {
         mList.clear();
         CollectionReference tareasCompletadas = firestore.collection(usuarioId);
-        tareasCompletadas.get().addOnCompleteListener(tarea -> {
+        tareasCompletadas.orderBy("limitDate").get().addOnCompleteListener(tarea -> {
             if (tarea.isSuccessful()) {
                 for (QueryDocumentSnapshot document : tarea.getResult()) {
                     String id = document.getId();
@@ -162,29 +162,52 @@ public class CompletadasFragment extends Fragment implements OnDialogCloseListen
 
         nuevoStatus = isChecked == true ? 1 : 0;
 
-//        Toast.makeText(getContext(), "Status: " + String.valueOf(nuevoStatus) + "\nPosicion: " + String.valueOf(elementoPosicion), Toast.LENGTH_SHORT).show();
-
+        ToDoModel toDoModel;
 
         try {
-            firestore.collection(usuarioId).document(mList.get(elementoPosicion).TaskId).update("status", nuevoStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-                        mList.remove(elementoPosicion);
-                        adapter.notifyItemRemoved(elementoPosicion);
-                    } else {
-                        Toast.makeText(getContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    }
+            if (elementoPosicion >= 0 && elementoPosicion < mList.size()) {
+                toDoModel = mList.get(elementoPosicion);
+
+                try {
+                    actualizarStatusFirestore(nuevoStatus, elementoPosicion, toDoModel);
+                } catch (Exception e) {
+                    Toast.makeText(getContext(),e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
-                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+
+            } else {
+                traerDB();
+
+                toDoModel = mList.get(elementoPosicion);
+
+                try {
+                    actualizarStatusFirestore(nuevoStatus, elementoPosicion, toDoModel);
+                } catch (Exception e) {
+                    Toast.makeText(getContext(),e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-            });
+            }
         } catch (Exception e) {
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
         }
+    }
+
+    private void actualizarStatusFirestore(int nuevoStatus, int elementoPosicion, ToDoModel toDoModel) {
+        firestore.collection(usuarioId).document(toDoModel.TaskId).update("status", nuevoStatus).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if (task.isSuccessful()) {
+                    mList.remove(elementoPosicion);
+                    adapter.notifyItemRemoved(elementoPosicion);
+
+                } else {
+                    Toast.makeText(getContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 
     @Override

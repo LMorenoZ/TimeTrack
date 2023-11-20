@@ -60,7 +60,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="0"
+                    android:text="00:00"
                     android:textColor="@color/lavender"
                     android:textSize="26sp"
                     android:textStyle="bold" />
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="44dp"
             android:layout_marginBottom="160dp"
-            android:text="+15s"
+            android:text="+1 minuto"
             android:textColor="@color/lavender"
             android:textSize="24sp"
             android:textStyle="bold"

@@ -36,7 +36,6 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
     private FirebaseAuth mAuth;
     private OnItemClickListener listener;
 
-
     public ToDoAdapter(FragmentActivity fragmentActivity, List<ToDoModel> todoList) {
         this.todoList = todoList;
         activity = fragmentActivity;
@@ -59,9 +58,10 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         ToDoModel toDoModel = todoList.get(position);
 
         firestore.collection(usuarioId).document(toDoModel.TaskId).delete();
-        todoList.remove(position);
 
+        todoList.remove(position);
         notifyItemRemoved(position);
+
         Toast.makeText(activity, "La tarea se borró correctamente", Toast.LENGTH_SHORT).show();
     }
 

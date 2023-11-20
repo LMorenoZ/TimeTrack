@@ -148,7 +148,7 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
 
 
         CollectionReference tareasPendientes = firestore.collection(usuarioId);
-        tareasPendientes.get().addOnCompleteListener(tarea -> {
+        tareasPendientes.orderBy("limitDate").get().addOnCompleteListener(tarea -> {
             if (tarea.isSuccessful()) {
                 for (QueryDocumentSnapshot document : tarea.getResult()) {
                     String id = document.getId();
@@ -183,30 +183,60 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
 
         nuevoStatus = isChecked == true ? 1 : 0;  // 0: not checked, 1: checked
 
-//        Toast.makeText(getContext(), "Status: " + String.valueOf(nuevoStatus) + "\nPosicion: " + String.valueOf(elementoPosicion), Toast.LENGTH_SHORT).show();
-
-
+        ToDoModel toDoModel;
         try {
-            firestore.collection(usuarioId).document(mList.get(elementoPosicion).TaskId)
-                    .update("status", nuevoStatus, "reminder", "").addOnCompleteListener(new OnCompleteListener<Void>() {
-                @Override
-                public void onComplete(@NonNull Task<Void> task) {
-                    if (task.isSuccessful()) {
-//                        mList.remove(elementoPosicion);
-                        adapter.notifyItemRemoved(elementoPosicion);
-                    } else {
-                        Toast.makeText(getContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-            }).addOnFailureListener(new OnFailureListener() {
-                @Override
-                public void onFailure(@NonNull Exception e) {
+            if (elementoPosicion >= 0 && elementoPosicion < mList.size()) {
+
+                try {
+                    toDoModel = mList.get(elementoPosicion);
+                    actualizarStatusFirestore(nuevoStatus, elementoPosicion, toDoModel);
+                } catch (Exception e) {
                     Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                 }
-            });
-        } catch (Exception e) {
-            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
-        }
+            } else {
+                traerDB();
 
+                toDoModel = mList.get(elementoPosicion);
+
+                try {
+                    actualizarStatusFirestore(nuevoStatus, elementoPosicion, toDoModel);
+                } catch (Exception e) {
+                    Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
+            }
+        } catch (Exception e) {
+            // TODO: Aqui da el error
+            Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+            traerDB();
+        }
+    }
+
+    private void actualizarStatusFirestore(int nuevoStatus, int elementoPosicion, ToDoModel toDoModel) {
+        firestore.collection(usuarioId).document(toDoModel.TaskId)
+                .update("status", nuevoStatus, "reminder", "").addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if (task.isSuccessful()) {
+                            try {
+//                                mList.remove(elementoPosicion);
+//                                adapter.notifyItemRemoved(elementoPosicion);
+                                if (elementoPosicion == 0 && mList.size() ==0) {
+                                    adapter.notifyDataSetChanged();
+                                }
+
+                            } catch (Exception e) {
+                                Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                            }
+
+                        } else {
+                            Toast.makeText(getContext(), task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 }

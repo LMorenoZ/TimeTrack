@@ -135,7 +135,7 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
         mList.clear();
 
         CollectionReference tareasAgendadas = firestore.collection(usuarioId);
-        tareasAgendadas.get().addOnCompleteListener(tarea -> {
+        tareasAgendadas.orderBy("limitDate").get().addOnCompleteListener(tarea -> {
             if (tarea.isSuccessful()) {
                 for (QueryDocumentSnapshot document : tarea.getResult()) {
                     try {

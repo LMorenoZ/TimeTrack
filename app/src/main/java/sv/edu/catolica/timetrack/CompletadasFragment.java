@@ -17,6 +17,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -46,7 +47,7 @@ import sv.edu.catolica.timetrack.Model.ToDoModel;
 
 public class CompletadasFragment extends Fragment implements OnDialogCloseListener, ToDoAdapter.OnItemClickListener {
     private RecyclerView mRecyclerViewCompletas;
-
+    private TextView mTvCompletasVacio;
     private FirebaseFirestore firestore;
     private String usuarioId;
     private FirebaseAuth mAuth;
@@ -74,6 +75,9 @@ public class CompletadasFragment extends Fragment implements OnDialogCloseListen
         mRecyclerViewCompletas.setHasFixedSize(true);
         mRecyclerViewCompletas.setLayoutManager(new LinearLayoutManager(view.getContext()));
 
+        // mensaje que aparece si en la lista del recyclerview no hay nada
+        mTvCompletasVacio = view.findViewById(R.id.tv_completasVacia);
+
         mList = new ArrayList<>();
         adapter = new ToDoAdapter(getActivity(), mList);
 
@@ -88,6 +92,24 @@ public class CompletadasFragment extends Fragment implements OnDialogCloseListen
         traerDB();
         mRecyclerViewCompletas.setAdapter(adapter);
         adapter.setOnItemClickListener(this);
+
+        adapter.setToDoAdapterListener(new ToDoAdapter.ToDoAdapterListener() {
+            @Override
+            public void onUltimoElementoEliminado(boolean listaVacia) {
+                comprobarVisibilidad();
+            }
+        });
+    }
+
+    private void comprobarVisibilidad() {
+//        Toast.makeText(getContext(), "hola", Toast.LENGTH_SHORT).show();
+        if (mList.isEmpty()) {
+            mTvCompletasVacio.setVisibility(View.VISIBLE); // Mostrar el mensaje de lista vacía
+            mRecyclerViewCompletas.setVisibility(View.GONE); // Ocultar el RecyclerView
+        } else {
+            mTvCompletasVacio.setVisibility(View.GONE); // Ocultar el mensaje de lista vacía
+            mRecyclerViewCompletas.setVisibility(View.VISIBLE); // Mostrar el RecyclerView
+        }
     }
 
     @Override
@@ -148,11 +170,17 @@ public class CompletadasFragment extends Fragment implements OnDialogCloseListen
                         adapter.notifyDataSetChanged();  // el adaptador actualiza su respectivo recyclerview
                     }
                 }
-
+                comprobarVisibilidad();
             } else {
                 Toast.makeText(getContext(), tarea.getException().toString(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        comprobarVisibilidad();
     }
 
     @Override
@@ -187,6 +215,13 @@ public class CompletadasFragment extends Fragment implements OnDialogCloseListen
             }
         } catch (Exception e) {
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
+        }
+
+        comprobarVisibilidad();
+
+        if (mList.size() == 1) {
+            mTvCompletasVacio.setVisibility(View.VISIBLE); // Mostrar el mensaje de lista vacía
+            mRecyclerViewCompletas.setVisibility(View.GONE); // Ocultar el RecyclerView
         }
     }
 

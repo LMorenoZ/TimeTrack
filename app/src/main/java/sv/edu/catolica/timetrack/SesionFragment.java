@@ -1,6 +1,7 @@
 package sv.edu.catolica.timetrack;
 
 import android.app.Dialog;
+import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 
@@ -110,6 +111,10 @@ public class SesionFragment extends Fragment {
 
                 TextView timeLeftTv = getView().findViewById(R.id.tvTimeLeft);
                 timeLeftTv.setText("00:00");
+
+                TextView addTimeTv = getView().findViewById(R.id.tvAddTime);
+                addTimeTv.setEnabled(false);
+                addTimeTv.setTextColor(requireActivity().getResources().getColor(R.color.lavender));
             }
         } catch (Exception e) {
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -118,7 +123,15 @@ public class SesionFragment extends Fragment {
 
     private void timePause() {
         if (timeCountDown != null) {
+            TextView addTimeTv = getView().findViewById(R.id.tvAddTime);
+            addTimeTv.setEnabled(false);
+            addTimeTv.setTextColor(Color.GRAY);
+
             timeCountDown.cancel();
+        } else {
+            TextView addTimeTv = getView().findViewById(R.id.tvAddTime);
+            addTimeTv.setEnabled(false);
+            addTimeTv.setTextColor(requireActivity().getResources().getColor(R.color.lavender));
         }
     }
 

@@ -21,6 +21,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnFailureListener;
@@ -45,6 +46,7 @@ import sv.edu.catolica.timetrack.Model.ReminderModel;
 
 public class RecordatoriosFragment extends Fragment implements ReminderAdapter.OnItemClickListener {
     private RecyclerView mRecyclerViewReminder;
+    private LinearLayout mLLVacio;
     private FirebaseFirestore firestore;
     private ListenerRegistration listenerRegistration;
     private String usuarioId;
@@ -74,6 +76,9 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
         mRecyclerViewReminder = view.findViewById(R.id.rvRecordatorios);
         mRecyclerViewReminder.setHasFixedSize(true);
         mRecyclerViewReminder.setLayoutManager(new LinearLayoutManager(view.getContext()));
+
+        // mensaje que aparece si en la lista del recyclerview no hay nada
+        mLLVacio = view.findViewById(R.id.ll_agendadoVacio);
 
         // para popular el recyclerview con los recordatorios
         mList = new ArrayList<>();
@@ -174,6 +179,14 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
 //                    adapter.notifyDataSetChanged();  // el adaptador actualiza su respectivo recyclerview
                 }
 
+                if (mList.isEmpty()) {
+                    mLLVacio.setVisibility(View.VISIBLE); // Mostrar el mensaje de lista vacía
+                    mRecyclerViewReminder.setVisibility(View.GONE); // Ocultar el RecyclerView
+                } else {
+                    mLLVacio.setVisibility(View.GONE); // Ocultar el mensaje de lista vacía
+                    mRecyclerViewReminder.setVisibility(View.VISIBLE); // Mostrar el RecyclerView
+                }
+
             } else {
                 Toast.makeText(getContext(), tarea.getException().toString(), Toast.LENGTH_SHORT).show();
             }
@@ -256,6 +269,7 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
         );
 
         // Mostrar el DatePickerDialog para seleccionar la fecha
+        datePickerDialog.getDatePicker().setMinDate(calendario.getTimeInMillis());
         datePickerDialog.show();
     }
 

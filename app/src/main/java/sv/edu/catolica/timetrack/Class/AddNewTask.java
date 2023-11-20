@@ -36,6 +36,8 @@ import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
+import org.checkerframework.checker.units.qual.C;
+
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -96,23 +98,6 @@ public class AddNewTask extends BottomSheetDialogFragment {
         // Se creay un adaptador para el spinner y se elige el layout a utilizar
         ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, actividadesTipos);
 
-        // Especifica el layout a utilizar cuando se despliega el listado de opciones
-        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-
-        // Aplica el adapter al spinner
-        mSpTipo.setAdapter(adapterSpinner);
-
-        // Captura el valor seleccionado del Spinner
-        mSpTipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                opcionElegida = parent.getItemAtPosition(position).toString();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {  }
-        });
-
 
         // Obteniendo instancia de Firestore
         firestore = FirebaseFirestore.getInstance();
@@ -136,12 +121,32 @@ public class AddNewTask extends BottomSheetDialogFragment {
             mTaskEdit.setText(task);
             setDueDate.setText("Agendado para: " + dueDateUpdate);
 
+//            selectedOptionUpdate = actividadesTipos.get()
+
 //          TODO: Descomentar esto antes de version final
 //            if (task.length() > 0) {  // validacion para no actualizar el mismo texto
 //                mSaveBtn.setEnabled(false);
 //                mSaveBtn.setBackgroundColor(Color.GRAY);
 //            }
         }
+
+        // Especifica el layout a utilizar cuando se despliega el listado de opciones
+        adapterSpinner.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+
+        // Aplica el adapter al spinner
+        mSpTipo.setAdapter(adapterSpinner);
+
+        // Captura el valor seleccionado del Spinner
+        boolean finalIsUpdate1 = isUpdate;
+        mSpTipo.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                opcionElegida = parent.getItemAtPosition(position).toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {  }
+        });
 
         // Comprueba que no se intente crear una tarea con el titulo vacio
         mTaskEdit.addTextChangedListener(new TextWatcher() {
@@ -153,10 +158,21 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 if(c.toString().trim().equals("")) {
                     mSaveBtn.setEnabled(false);
                     mSaveBtn.setBackgroundColor(Color.GRAY);
-                } else {
-                    mSaveBtn.setEnabled(true);
-                    mSaveBtn.setBackgroundColor(getResources().getColor(R.color.lavender));
                 }
+                else {
+                    if (!dueDate.isEmpty()) {
+
+
+                        mSaveBtn.setEnabled(true);
+                        mSaveBtn.setBackgroundColor(getResources().getColor(R.color.lavender));
+                    }
+//                    mSaveBtn.setEnabled(true);
+//                    mSaveBtn.setBackgroundColor(getResources().getColor(R.color.lavender));
+                }
+//                if (!dueDate.isEmpty()) {
+//                    mSaveBtn.setEnabled(true);
+//                    mSaveBtn.setBackgroundColor(getResources().getColor(R.color.lavender));
+//                }
             }
 
             @Override
@@ -188,11 +204,20 @@ public class AddNewTask extends BottomSheetDialogFragment {
                         setDueDate.setText(dayOfMonth + "/" + month + "/" + year);
                         dueDate = dayOfMonth + "/" + month + "/" + year;
 
+                        // habilitando el boton de aniadir
+                        if (!mTaskEdit.getText().toString().isEmpty()) {
+                            mSaveBtn.setEnabled(true);
+                            mSaveBtn.setBackgroundColor(requireActivity().getResources().getColor(R.color.lavender));
+                        }
+
                         // Capturan y convirtiendo la fecha seleccionada en un valor timestamp de firestore
                         calendar.set(year, month - 1, dayOfMonth);
                         limitDate = new Timestamp(calendar.getTime());
                     }
                 }, YEAR, MONTH, DATE);
+
+                datePickerDialog.getDatePicker().setMinDate(calendar.getTimeInMillis());
+
                 datePickerDialog.show();
             }
         });
@@ -267,6 +292,9 @@ public class AddNewTask extends BottomSheetDialogFragment {
                 dismiss();
             }
         });
+
+        mSaveBtn.setEnabled(false);
+        mSaveBtn.setBackgroundColor(Color.GRAY);
     }
 
     @Override

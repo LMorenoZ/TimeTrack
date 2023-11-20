@@ -35,6 +35,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
     private String usuarioId;
     private FirebaseAuth mAuth;
     private OnItemClickListener listener;
+    private ToDoAdapterListener listenerRv;
 
     public ToDoAdapter(FragmentActivity fragmentActivity, List<ToDoModel> todoList) {
         this.todoList = todoList;
@@ -63,6 +64,12 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         notifyItemRemoved(position);
 
         Toast.makeText(activity, "La tarea se borró correctamente", Toast.LENGTH_SHORT).show();
+
+        if (listenerRv != null) {
+            listenerRv.onUltimoElementoEliminado(todoList.isEmpty());
+        }
+
+
     }
 
     public Context getContext() {
@@ -78,8 +85,10 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         bundle.putString("type", toDoModel.getType());
         bundle.putString("id", toDoModel.TaskId);
         // Conviertiendo el timestamp "limitDate"
-        bundle.putLong("limitDateSec", toDoModel.getLimitDate().getSeconds());  // segundos del timestamp
-        bundle.putInt("limitDateNano", toDoModel.getLimitDate().getNanoseconds()); // nanosegundos del timestamp
+        if(toDoModel.getLimitDate() != null) {
+            bundle.putLong("limitDateSec", toDoModel.getLimitDate().getSeconds());  // segundos del timestamp
+            bundle.putInt("limitDateNano", toDoModel.getLimitDate().getNanoseconds()); // nanosegundos del timestamp
+        }
 
         AddNewTask addNewTask = new AddNewTask();
         addNewTask.setArguments(bundle);
@@ -139,9 +148,17 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         }
     }
 
-    // Interfaz
+    // Interfaces
     public interface OnItemClickListener {
         void onItemClick(int position, boolean isChecked);
+    }
+
+    public interface ToDoAdapterListener {
+        void onUltimoElementoEliminado(boolean listaVacia);
+    }
+
+    public void setToDoAdapterListener(ToDoAdapterListener listener) {
+        this.listenerRv = listener;
     }
 
     public void setOnItemClickListener(OnItemClickListener listener) {

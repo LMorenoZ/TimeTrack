@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -45,6 +46,7 @@ import sv.edu.catolica.timetrack.Model.ToDoModel;
 public class PendientesFragment extends Fragment implements OnDialogCloseListener, ToDoAdapter.OnItemClickListener {
 
     private RecyclerView mRecyclerViewPendientes;
+    private TextView mTvPendientesVacio;
     private FloatingActionButton mFabPendiente;
     private FirebaseFirestore firestore;
     private String usuarioId;
@@ -80,6 +82,9 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
             }
         });
 
+        // mensaje que aparece si en la lista del recyclerview no hay nada
+        mTvPendientesVacio = view.findViewById(R.id.tv_pendientesVacia);
+
         mList = new ArrayList<>();
         adapter = new ToDoAdapter(getActivity(), mList);
 
@@ -96,6 +101,23 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
         traerDB();
         mRecyclerViewPendientes.setAdapter(adapter);
         adapter.setOnItemClickListener(this);
+
+        adapter.setToDoAdapterListener(new ToDoAdapter.ToDoAdapterListener() {
+            @Override
+            public void onUltimoElementoEliminado(boolean listaVacia) {
+                comprobarVisibilidad();
+            }
+        });
+    }
+
+    private void comprobarVisibilidad() {
+        if (mList.isEmpty()) {
+            mTvPendientesVacio.setVisibility(View.VISIBLE); // Mostrar el mensaje de lista vacía
+            mRecyclerViewPendientes.setVisibility(View.GONE); // Ocultar el RecyclerView
+        } else {
+            mTvPendientesVacio.setVisibility(View.GONE); // Ocultar el mensaje de lista vacía
+            mRecyclerViewPendientes.setVisibility(View.VISIBLE); // Mostrar el RecyclerView
+        }
     }
 
     @Override
@@ -169,7 +191,7 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
                     }
 
                 }
-
+                comprobarVisibilidad();
             } else {
                 Toast.makeText(getContext(), tarea.getException().toString(), Toast.LENGTH_SHORT).show();
             }

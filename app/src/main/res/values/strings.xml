@@ -1,7 +1,66 @@
 <resources>
-    <string name="app_name">TimeTrack</string>
-    <string name="open_nav">Open Navigation Drawer</string>
-    <string name="close_nav">Close Navigation Drawer</string>
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="app_name" translatable="false">TimeTrack</string>
+    <string name="open_nav" translatable="false">Open Navigation Drawer</string>
+    <string name="close_nav" translatable="false">Close Navigation Drawer</string>
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
+    <string name="txt_signin">Inicie sesión rápidamente con su cuenta institucional</string>
+    <string name="txt_pendientes_tab">Pendientes</string>
+    <string name="txt_completadas_tab">Completadas</string>
+    <string name="txt_saludo">Hola, bienvenid@!!</string>
+    <string name="txt_nav_tareas">Tareas</string>
+    <string name="txt_nav_recordatorios">Recordatorios</string>
+    <string name="txt_nav_sesion">Sesión de estudio</string>
+    <string name="txt_nav_acercade">Acerca de</string>
+    <string name="txt_nav_logout">Cerrar sesión</string>
+    <string name="txt_tarea_hint">Nombre de la tarea</string>
+    <string name="txt_agendado_para">Agendar para...</string>
+    <string name="txt_tipo_de_actividad">Tipo de actividad:</string>
+    <string name="txt_btn_guardar">Guardar</string>
+    <string name="txt_minutos">Ingrese tiempo en minutos</string>
+    <string name="txt_btn_aceptar_sesion">Aceptar</string>
+    <string name="txt_integrantes">Integrantes</string>
+    <string name="txt_sesion_title">Sesión de estudio</string>
+    <string name="txt_tiempo_restante">restantes</string>
+    <string name="txt_un_minuto">+1 minuto</string>
+    <string name="txt_btn_sesion_cancelar">Cancelar</string>
+    <string name="txt_btn_comenzar">Comenzar</string>
+    <string name="agendado_para_el">"Agendado para el "</string>
+    <string name="no_hay_recordatorio_programado">No hay recordatorio programado</string>
+    <string name="recordarme_el">"Recordarme el "</string>
+    <string name="txt_actividades_agendadas">Mis actividades agendadas</string>
+    <string name="txt_no_tienes_actividades_agendadas">No tienes actividades agendadas</string>
+    <string name="txt_no_completadas">Aún no completas ninguna actividad</string>
+    <string name="no_tienes_actividades_pendientes">No tienes actividades pendientes</string>
+    <string name="la_tarea_se_borr_correctamente">La tarea se borró correctamente</string>
+    <string name="programada_en">"Programada en "</string>
+    <string name="finalizada">Finalizada</string>
+    <string name="examen_escrito">Examen escrito</string>
+    <string name="gu_a_de_estudios">Guía de estudios</string>
+    <string name="exposici_n">Exposición</string>
+    <string name="actividad_pr_ctica">Actividad práctica</string>
+    <string name="otras_actividades">Otras actividades</string>
+    <string name="agendado_para">"Agendado para: "</string>
+    <string name="tarea_actualizada">Tarea actualizada</string>
+    <string name="no_se_permiten_actividades_en_blanco">No se permiten actividades en blanco</string>
+    <string name="tarea_guardada">Tarea guardada</string>
+    <string name="est_s_seguro">¿Estás seguro?</string>
+    <string name="borrar_actividad">Borrar actividad</string>
+    <string name="borrar">Borrar</string>
+    <string name="cancelar">Cancelar</string>
+    <string name="pendientes">Pendientes</string>
+    <string name="completadas">Completadas</string>
+    <string name="cerrar_sesi_n">Cerrar sesión</string>
+    <string name="est_seguro_que_desea_salir">¿Estás seguor que quieres salir?</string>
+    <string name="confirmar">Confirmar</string>
+    <string name="cancelar_logout">Cancelar</string>
+    <string name="se_program_una_notificaci_n">Se programó una notificación</string>
+    <string name="actividad_agendada_para_el">"Actividad agendada para el "</string>
+    <string name="_1_minuto_a_adido">1 minuto añadido</string>
+    <string name="comenzar">Comenzar</string>
+    <string name="pausar">Pausar</string>
+    <string name="reanudar">Reanudar</string>
+    <string name="ingrese_un_tiempo">Ingrese un tiempo</string>
+    <string name="finaliz">Finalizó</string>
+    <string name="txt_ingrese_un_tiempo">Ingrese un tiempo</string>
+    <string name="txt_comenzar">Comenzar</string>
 </resources>

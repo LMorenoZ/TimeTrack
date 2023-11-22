@@ -14,7 +14,7 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Sesión de estudio"
+            android:text="@string/txt_sesion_title"
             android:textAlignment="center"
             android:textColor="@color/green_blue"
             android:textSize="24sp"
@@ -69,7 +69,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="restantes"
+                    android:text="@string/txt_tiempo_restante"
                     android:textColor="@color/lavender"
                     android:textSize="20sp" />
 
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="44dp"
             android:layout_marginBottom="160dp"
-            android:text="+1 minuto"
+            android:text="@string/txt_un_minuto"
             android:textColor="@color/lavender"
             android:textSize="24sp"
             android:textStyle="bold"
@@ -109,7 +109,7 @@
             android:layout_marginEnd="44dp"
             android:layout_marginBottom="160dp"
             android:background="@color/lavender"
-            android:text="Cancelar"
+            android:text="@string/txt_btn_sesion_cancelar"
             android:textColor="@color/white"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
@@ -120,7 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_marginBottom="52dp"
             android:background="@color/dark_blue"
-            android:text="Comenzar"
+            android:text="@string/txt_btn_comenzar"
             android:textColor="@color/white"
             android:textSize="22sp"
             android:textStyle="bold"

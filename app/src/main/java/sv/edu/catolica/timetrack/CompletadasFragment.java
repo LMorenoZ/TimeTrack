@@ -3,44 +3,35 @@ package sv.edu.catolica.timetrack;
 import android.content.DialogInterface;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentTransaction;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.CheckBox;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.Task;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import sv.edu.catolica.timetrack.Adapter.ToDoAdapter;
-import sv.edu.catolica.timetrack.Class.AddNewTask;
 import sv.edu.catolica.timetrack.Class.TouchHelper;
 import sv.edu.catolica.timetrack.Interfaces.OnDialogCloseListener;
 import sv.edu.catolica.timetrack.Model.ToDoModel;
@@ -102,7 +93,6 @@ public class CompletadasFragment extends Fragment implements OnDialogCloseListen
     }
 
     private void comprobarVisibilidad() {
-//        Toast.makeText(getContext(), "hola", Toast.LENGTH_SHORT).show();
         if (mList.isEmpty()) {
             mTvCompletasVacio.setVisibility(View.VISIBLE); // Mostrar el mensaje de lista vacía
             mRecyclerViewCompletas.setVisibility(View.GONE); // Ocultar el RecyclerView

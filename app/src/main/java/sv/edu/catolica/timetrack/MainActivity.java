@@ -1,5 +1,13 @@
 package sv.edu.catolica.timetrack;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.MenuItem;
+import android.view.View;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
+
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AlertDialog;
@@ -8,31 +16,14 @@ import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
 import androidx.drawerlayout.widget.DrawerLayout;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.CircleCrop;
-import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
-import com.bumptech.glide.request.RequestOptions;
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
-import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.firestore.CollectionReference;
-import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -112,7 +103,22 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
         Calendar calendar = Calendar.getInstance();
 
         // Define el formato deseado ("EEEE d 'de' MMMM 'de' yyyy")
-        SimpleDateFormat formatoFecha = new SimpleDateFormat("EEEE d 'de' MMMM 'de' yyyy", new Locale("es", "ES"));
+        SimpleDateFormat formatoFecha;
+        String idioma = Locale.getDefault().getLanguage();
+        switch (idioma) {
+            case "es":
+                formatoFecha = new SimpleDateFormat("EEEE d 'de' MMMM 'de' yyyy", Locale.getDefault()); // formato para español
+                break;
+            case "en":
+                formatoFecha = new SimpleDateFormat("EEEE, MMMM d, yyyy", Locale.getDefault()); // formato para ingles
+                break;
+            case "pt":
+                formatoFecha = new SimpleDateFormat("EEEE, d 'de' MMMM 'de' yyyy", Locale.getDefault()); // formato para portugues
+                break;
+            default:
+                formatoFecha = new SimpleDateFormat("EEEE d 'de' MMMM 'de' yyyy", Locale.getDefault()); // formato para otros idiomas
+                break;
+        }
 
         // Formatea la fecha según el patrón
         String fechaEnString = formatoFecha.format(calendar.getTime());
@@ -134,8 +140,6 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
                     // crea de nuevo el fragment del viewpager y lo asigna al fragment "pendiente"
                     getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
                 }
-//                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new HomeFragment()).commit();
-
             } else if (itemId == R.id.nav_settings) {
                 getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, new RecordatoriosFragment()).commit();
             } else if (itemId == R.id.nav_share) {
@@ -145,14 +149,14 @@ public class MainActivity extends AppCompatActivity implements NavigationView.On
             } else if (itemId == R.id.nav_logout) {
                 // Dialogo de confirmacion
                 AlertDialog.Builder builder = new AlertDialog.Builder(this);
-                builder.setTitle("Cerrar sesión");
-                builder.setMessage("¿Está seguro que desea salir?");
+                builder.setTitle(R.string.cerrar_sesi_n);
+                builder.setMessage(R.string.est_seguro_que_desea_salir);
 
-                builder.setPositiveButton("Confirmar", (dialog, which) -> {
+                builder.setPositiveButton(R.string.confirmar, (dialog, which) -> {
                     logout();
                 });
 
-                builder.setNegativeButton("Cancelar", (dialog, which) -> { });
+                builder.setNegativeButton(R.string.cancelar_logout, (dialog, which) -> { });
 
                 AlertDialog dialog = builder.create();
                 dialog.show();

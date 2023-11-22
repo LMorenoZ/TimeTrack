@@ -22,7 +22,7 @@
             android:textColor="@color/green_blue"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="15dp"
-            android:text="Mis actividades agendadas" />
+            android:text="@string/txt_actividades_agendadas" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/rvRecordatorios"
@@ -42,7 +42,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
-                android:text="Aún no completas ninguna actividad"
+                android:text="@string/txt_no_tienes_actividades_agendadas"
                 android:textStyle="italic"
                 android:textAlignment="center"
                 android:textSize="23sp"

@@ -63,7 +63,7 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         todoList.remove(position);
         notifyItemRemoved(position);
 
-        Toast.makeText(activity, "La tarea se borró correctamente", Toast.LENGTH_SHORT).show();
+        Toast.makeText(activity, R.string.la_tarea_se_borr_correctamente, Toast.LENGTH_SHORT).show();
 
         if (listenerRv != null) {
             listenerRv.onUltimoElementoEliminado(todoList.isEmpty());
@@ -105,11 +105,11 @@ public class ToDoAdapter extends RecyclerView.Adapter<ToDoAdapter.MyViewHolder> 
         ToDoModel toDoModel = todoList.get(position);
         holder.mCheckBox.setText(toDoModel.getTask());
         holder.mCheckBox.setChecked(toBoolean(toDoModel.getStatus()));
-        holder.mDueDateTv.setText("Programada en " + toDoModel.getDue());
+        holder.mDueDateTv.setText(activity.getString(R.string.programada_en) + toDoModel.getDue());
 
         // Pintando el checkbox de un color diferente y quitando la fecha agendada si esta checkeado (= tarea completada)
         if(holder.mCheckBox.isChecked()) {
-            holder.mDueDateTv.setText("Finalizada");
+            holder.mDueDateTv.setText(R.string.finalizada);
             holder.mConstraintLayout.setBackgroundColor(getContext().getResources().getColor(R.color.ligh_blue));
         }
 

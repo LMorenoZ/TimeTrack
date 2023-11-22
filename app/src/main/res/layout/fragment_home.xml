@@ -33,12 +33,12 @@
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Pendientes" />
+                    android:text="@string/txt_pendientes_tab" />
 
                 <com.google.android.material.tabs.TabItem
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Completadas"
+                    android:text="@string/txt_completadas_tab"
                     tools:layout_editor_absoluteX="133dp"
                     tools:layout_editor_absoluteY="-2dp" />
 

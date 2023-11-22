@@ -29,7 +29,7 @@
                 android:textColor="@color/green_blue"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="15dp"
-                android:text="Integrantes" />
+                android:text="@string/txt_integrantes" />
 
             <ImageView
                 android:layout_width="300dp"

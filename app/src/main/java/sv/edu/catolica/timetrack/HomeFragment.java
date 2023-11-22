@@ -1,17 +1,15 @@
 package sv.edu.catolica.timetrack;
 
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.viewpager.widget.ViewPager;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.google.android.material.tabs.TabLayout;
 
@@ -36,8 +34,8 @@ public class HomeFragment extends Fragment {
         tabLayout.setupWithViewPager(viewPager);
 
         VPAdapter vpAdapter = new VPAdapter(getChildFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-        vpAdapter.addFragment(new PendientesFragment(), "Pendientes");
-        vpAdapter.addFragment(new CompletadasFragment(), "Completadas");
+        vpAdapter.addFragment(new PendientesFragment(), getString(R.string.pendientes));
+        vpAdapter.addFragment(new CompletadasFragment(), getString(R.string.completadas));
         viewPager.setOffscreenPageLimit(2);
         viewPager.setAdapter(vpAdapter);
     }
@@ -45,19 +43,6 @@ public class HomeFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-
-//        View view = inflater.inflate(R.layout.fragment_home, container, false);
-//
-//        tabLayout = view.findViewById(R.id.tablayout);
-//        viewPager = view.findViewById(R.id.viewpager);
-//
-//        tabLayout.setupWithViewPager(viewPager);
-//
-//        VPAdapter vpAdapter = new VPAdapter(getParentFragmentManager(), FragmentPagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT);
-//        vpAdapter.addFragment(new PendientesFragment(), "Pendientes");
-//        vpAdapter.addFragment(new CompletadasFragment(), "Completadas");
-//        viewPager.setAdapter(vpAdapter);
-//        return view;
 
         return inflater.inflate(R.layout.fragment_home, container, false);
     }

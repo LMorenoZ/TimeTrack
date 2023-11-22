@@ -1,6 +1,5 @@
 package sv.edu.catolica.timetrack.Class;
 
-import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -23,7 +22,6 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -33,21 +31,16 @@ import com.google.firebase.Timestamp;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
-import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import org.checkerframework.checker.units.qual.C;
-
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
-import sv.edu.catolica.timetrack.R;
 import sv.edu.catolica.timetrack.Interfaces.OnDialogCloseListener;
+import sv.edu.catolica.timetrack.R;
 
 public class AddNewTask extends BottomSheetDialogFragment {
     public static final String TAG = "AddNewTask";
@@ -89,11 +82,11 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
         // Array para popular el spinner
         List<String> actividadesTipos = new ArrayList<>();
-        actividadesTipos.add("Examen escrito");
-        actividadesTipos.add("Guía de estudios");
-        actividadesTipos.add("Exposición");
-        actividadesTipos.add("Actividad práctica");
-        actividadesTipos.add("Otras actividades");
+        actividadesTipos.add(getString(R.string.examen_escrito));
+        actividadesTipos.add(getString(R.string.gu_a_de_estudios));
+        actividadesTipos.add(getString(R.string.exposici_n));
+        actividadesTipos.add(getString(R.string.actividad_pr_ctica));
+        actividadesTipos.add(getString(R.string.otras_actividades));
 
         // Se creay un adaptador para el spinner y se elige el layout a utilizar
         ArrayAdapter<String> adapterSpinner = new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, actividadesTipos);
@@ -119,15 +112,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
 
             mSpTipo.setSelection(actividadesTipos.indexOf(opcionElegida));
             mTaskEdit.setText(task);
-            setDueDate.setText("Agendado para: " + dueDateUpdate);
-
-//            selectedOptionUpdate = actividadesTipos.get()
-
-//          TODO: Descomentar esto antes de version final
-//            if (task.length() > 0) {  // validacion para no actualizar el mismo texto
-//                mSaveBtn.setEnabled(false);
-//                mSaveBtn.setBackgroundColor(Color.GRAY);
-//            }
+            setDueDate.setText(getString(R.string.agendado_para) + dueDateUpdate);
         }
 
         // Especifica el layout a utilizar cuando se despliega el listado de opciones
@@ -166,13 +151,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                         mSaveBtn.setEnabled(true);
                         mSaveBtn.setBackgroundColor(getResources().getColor(R.color.lavender));
                     }
-//                    mSaveBtn.setEnabled(true);
-//                    mSaveBtn.setBackgroundColor(getResources().getColor(R.color.lavender));
                 }
-//                if (!dueDate.isEmpty()) {
-//                    mSaveBtn.setEnabled(true);
-//                    mSaveBtn.setBackgroundColor(getResources().getColor(R.color.lavender));
-//                }
             }
 
             @Override
@@ -239,10 +218,10 @@ public class AddNewTask extends BottomSheetDialogFragment {
                             "type", opcionElegida,
                             "limitDate", limitDate
                     );
-                    Toast.makeText(context, "Tarea actualizada", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, R.string.tarea_actualizada, Toast.LENGTH_SHORT).show();
                 } else {  // para crear la tarea
                     if (task.isEmpty()) {
-                        Toast.makeText(context, "No se permiten actividades en blanco", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(context, R.string.no_se_permiten_actividades_en_blanco, Toast.LENGTH_SHORT).show();
                     } else {
                         // generando un entero del instante, a manera de id, para identificar su respectiva notificacion AlarmManager
                         // Obtener la fecha y hora actual del sistema
@@ -276,7 +255,7 @@ public class AddNewTask extends BottomSheetDialogFragment {
                             @Override
                             public void onComplete(@NonNull Task<DocumentReference> task) {
                                 if (task.isSuccessful()) {
-                                    Toast.makeText(context, "Tarea guardada", Toast.LENGTH_SHORT).show();
+                                    Toast.makeText(context, R.string.tarea_guardada, Toast.LENGTH_SHORT).show();
                                 } else {
                                     Toast.makeText(context, task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                 }

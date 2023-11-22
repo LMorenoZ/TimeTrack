@@ -13,7 +13,7 @@
         android:layout_margin="10dp"
         android:textSize="16sp"
         android:backgroundTint="@color/green_blue"
-        android:hint="Nombre de la tarea"
+        android:hint="@string/txt_tarea_hint"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.842"
         app:layout_constraintStart_toStartOf="parent"
@@ -27,7 +27,7 @@
         android:layout_marginTop="10dp"
         android:drawableRight="@drawable/ic_baseline_calendar_today_24"
         android:drawablePadding="8dp"
-        android:text="Agendar para..."
+        android:text="@string/txt_agendado_para"
         android:textColor="@color/green_blue"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"
@@ -41,7 +41,7 @@
         android:textColor="@color/white"
         android:layout_marginTop="10dp"
         android:layout_marginEnd="16dp"
-        android:text="Guardar"
+        android:text="@string/txt_btn_guardar"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/spTipo" />
 
@@ -51,7 +51,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="42dp"
         android:layout_marginEnd="16dp"
-        android:tooltipText="Elija"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/textView"
         app:layout_constraintTop_toBottomOf="@+id/et_task" />
@@ -62,7 +61,7 @@
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="10dp"
-        android:text="Tipo de actividad: "
+        android:text="@string/txt_tipo_de_actividad"
         android:textColor="@color/green_blue"
         android:textSize="16sp"
         app:layout_constraintStart_toStartOf="parent"

@@ -25,7 +25,7 @@
             android:id="@+id/tvRespuestaLogin"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Inicie sesión rápidamente con su cuenta institucional"
+            android:text="@string/txt_signin"
             android:layout_margin="10dp"
             android:textColor="@color/white"
             android:textAlignment="center"

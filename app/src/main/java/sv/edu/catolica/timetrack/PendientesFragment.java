@@ -1,8 +1,12 @@
 package sv.edu.catolica.timetrack;
 
 import android.content.DialogInterface;
-import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -10,12 +14,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -25,16 +23,12 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentChange;
-import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FirebaseFirestore;
-import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.ListenerRegistration;
 import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
-import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import sv.edu.catolica.timetrack.Adapter.ToDoAdapter;
@@ -65,7 +59,6 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-
 
         mRecyclerViewPendientes = view.findViewById(R.id.rvPendientes);
         mFabPendiente = view.findViewById(R.id.fabPendientes);
@@ -137,20 +130,16 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
                         Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
+
+                    // llama a la bd si ha ocurrido alguna modificacion en algun documento de la coleccion
+                    boolean siTraerDB = false;
                     for(DocumentChange documentChange : queryDocumentSnapshot.getDocumentChanges())  {
-
                         if(documentChange.getType() == DocumentChange.Type.MODIFIED) {
-                            String id = documentChange.getDocument().getId();
-                            ToDoModel toDoModel = documentChange.getDocument().toObject(ToDoModel.class).withId(id);
-
-                            // TODO: Aqui tengo la posicion del elemento completado
-                            // Para determinar que no se dupliquen elementos al actualizar
-//                            Toast.makeText(getContext(), String.valueOf(toDoModel.getStatus()), Toast.LENGTH_SHORT).show();
-//                            Toast.makeText(getContext(), String.valueOf(mList.size()), Toast.LENGTH_SHORT).show();
-
-
-                            traerDB();
+                            siTraerDB = true;
                         }
+                    }
+                    if (siTraerDB) {
+                        traerDB();
                     }
                 });
     }
@@ -158,7 +147,7 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
     @Override
     public void onStop() {
         super.onStop();
-        // Detener la escucha cuando el Fragment se detiene
+        // Detener la escucha cuando el Fragment desaparece
         if (listenerRegistration != null) {
             listenerRegistration.remove();
         }
@@ -167,7 +156,6 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
     private void traerDB() {
         // Trae los datos desde la DB y los pinta en un recyclerview asociado
         mList.clear();
-
 
         CollectionReference tareasPendientes = firestore.collection(usuarioId);
         tareasPendientes.orderBy("limitDate").get().addOnCompleteListener(tarea -> {
@@ -185,7 +173,6 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
                     }
 
                     if (!listaIds.contains(id) && (toDoModel.getStatus() == 0) ) { // solo agrega tareas pendientes (status = 0)
-//                        Toast.makeText(getContext(), "no deberia aparecer", Toast.LENGTH_SHORT).show();
                         mList.add(toDoModel);  // se aniade el elemento a la lista del adaptador
                         adapter.notifyDataSetChanged();  // el adaptador actualiza su respectivo recyclerview
                     }
@@ -208,7 +195,6 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
         ToDoModel toDoModel;
         try {
             if (elementoPosicion >= 0 && elementoPosicion < mList.size()) {
-
                 try {
                     toDoModel = mList.get(elementoPosicion);
                     actualizarStatusFirestore(nuevoStatus, elementoPosicion, toDoModel);
@@ -227,7 +213,6 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
                 }
             }
         } catch (Exception e) {
-            // TODO: Aqui da el error
             Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
             traerDB();
         }
@@ -240,12 +225,9 @@ public class PendientesFragment extends Fragment implements OnDialogCloseListene
                     public void onComplete(@NonNull Task<Void> task) {
                         if (task.isSuccessful()) {
                             try {
-//                                mList.remove(elementoPosicion);
-//                                adapter.notifyItemRemoved(elementoPosicion);
                                 if (elementoPosicion == 0 && mList.size() ==0) {
                                     adapter.notifyDataSetChanged();
                                 }
-
                             } catch (Exception e) {
                                 Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                             }

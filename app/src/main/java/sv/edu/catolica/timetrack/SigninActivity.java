@@ -1,13 +1,16 @@
 package sv.edu.catolica.timetrack;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
+import static android.content.ContentValues.TAG;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.appcompat.app.AppCompatActivity;
 
 import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
@@ -78,13 +81,9 @@ public class SigninActivity extends AppCompatActivity {
             try {
                 // Google Sign In was successful, authenticate with Firebase
                 GoogleSignInAccount account = task.getResult(ApiException.class);
-                // Log.d(TAG, "firebaseAuthWithGoogle:" + account.getId());
                 firebaseAuthWithGoogle(account.getIdToken());
             } catch (ApiException e) {
-                // Google Sign In failed, update UI appropriately
-//                Log.w(TAG, "Google sign in failed", e);
-//                mtvRespuestaLogin.setText(e.getMessage());
-//                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
     }
@@ -97,14 +96,14 @@ public class SigninActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
-//                            Log.d(TAG, "signInWithCredential:success");
+                            Log.d(TAG, "signInWithCredential:success");
                             FirebaseUser user = mAuth.getCurrentUser();
                             updateUI(user);
                         } else {
                             // If sign in fails, display a message to the user.
-//                            Log.w(TAG, "signInWithCredential:failure", task.getException());
-//                            mtvRespuestaLogin.setText(task.getException().toString());
-//                            Toast.makeText(SigninActivity.this, "Error: " + task.getException().toString(), Toast.LENGTH_SHORT).show();
+                            Log.w(TAG, "signInWithCredential:failure", task.getException());
+                            mtvRespuestaLogin.setText(task.getException().toString());
+                            Toast.makeText(SigninActivity.this, "Error: " + task.getException().toString(), Toast.LENGTH_SHORT).show();
                             updateUI(null);
                         }
                     }

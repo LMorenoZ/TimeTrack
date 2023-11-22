@@ -10,22 +10,22 @@
         <item
             android:id="@+id/nav_home"
             android:icon="@drawable/ic_baseline_school_24"
-            android:title="Tareas"/>
+            android:title="@string/txt_nav_tareas"/>
 
         <item
             android:id="@+id/nav_settings"
             android:icon="@drawable/ic_baseline_calendar_month_24"
-            android:title="Recordatorios"/>
+            android:title="@string/txt_nav_recordatorios"/>
 
         <item
             android:id="@+id/nav_share"
             android:icon="@drawable/ic_baseline_access_time_24"
-            android:title="Sesión de estudio"/>
+            android:title="@string/txt_nav_sesion"/>
 
         <item
             android:id="@+id/nav_about"
             android:icon="@drawable/nav_about"
-            android:title="Acerca de"/>
+            android:title="@string/txt_nav_acercade"/>
     </group>
 
     <item android:title="">
@@ -33,7 +33,7 @@
             <item
                 android:id="@+id/nav_logout"
                 android:icon="@drawable/nav_logout"
-                android:title="Cerrar sesión"
+                android:title="@string/txt_nav_logout"
                 />
         </menu>
     </item>

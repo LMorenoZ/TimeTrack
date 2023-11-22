@@ -56,15 +56,15 @@ public class ReminderAdapter extends RecyclerView.Adapter<ReminderAdapter.MyView
 
         ReminderModel reminderModel = reminderList.get(posicionElemento);
         holder.mTvTitulo.setText(reminderModel.getTitulo());
-        holder.mTvFecha.setText("Agendado para el " + reminderModel.getFecha());
+        holder.mTvFecha.setText(activity.getString(R.string.agendado_para_el) + reminderModel.getFecha());
         holder.mTvTipo.setText(reminderModel.getTipo());
 
         // Estableciendo el string del recordatorio
         String notificacionInfo = "";
         if (reminderModel.getHoraNoti().isEmpty()) {
-            notificacionInfo = "No hay recordatorio programado";
+            notificacionInfo = activity.getString(R.string.no_hay_recordatorio_programado);
         } else {
-            notificacionInfo = "Recordarme el " + reminderModel.getHoraNoti();
+            notificacionInfo = activity.getString(R.string.recordarme_el) + reminderModel.getHoraNoti();
         }
         holder.mTvNoti.setText(notificacionInfo);
 

@@ -3,21 +3,16 @@ package sv.edu.catolica.timetrack.Class;
 import android.content.DialogInterface;
 import android.graphics.Canvas;
 import android.graphics.Color;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
-import androidx.fragment.app.FragmentPagerAdapter;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 
 import it.xabaras.android.recyclerview.swipedecorator.RecyclerViewSwipeDecorator;
 import sv.edu.catolica.timetrack.Adapter.ToDoAdapter;
-import sv.edu.catolica.timetrack.Interfaces.OnDialogCloseListener;
-import sv.edu.catolica.timetrack.PendientesFragment;
 import sv.edu.catolica.timetrack.R;
 
 public class TouchHelper extends ItemTouchHelper.SimpleCallback {
@@ -41,14 +36,14 @@ public class TouchHelper extends ItemTouchHelper.SimpleCallback {
 
         if (direction == ItemTouchHelper.RIGHT) {
             AlertDialog.Builder builder = new AlertDialog.Builder(adapter.getContext());
-            builder.setMessage("¿Estás seguro?")
-                    .setTitle("Borrar actividad")
-                    .setPositiveButton("Borrar", new DialogInterface.OnClickListener() {
+            builder.setMessage(R.string.est_s_seguro)
+                    .setTitle(R.string.borrar_actividad)
+                    .setPositiveButton(R.string.borrar, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {
                             adapter.deleteTask(position);
                         }
-                    }).setNegativeButton("Cancelar", new DialogInterface.OnClickListener() {
+                    }).setNegativeButton(R.string.cancelar, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialogInterface, int i) {  }
                     }).setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -62,8 +57,6 @@ public class TouchHelper extends ItemTouchHelper.SimpleCallback {
             dialog.show();
         } else {
             adapter.editTask(position, fragment);
-            
-//            adapter.notifyItemChanged(position);
         }
     }
     

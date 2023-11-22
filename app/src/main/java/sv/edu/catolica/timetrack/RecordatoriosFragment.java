@@ -108,21 +108,18 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
                         Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                         return;
                     }
+
+                    // llama a la bd si ha ocurrido alguna modificacion en algun documento de la coleccion
+                    boolean siTraerDB = false;
                     for(DocumentChange documentChange : queryDocumentSnapshot.getDocumentChanges())  {
-
                         if(documentChange.getType() == DocumentChange.Type.MODIFIED) {
-                            String id = documentChange.getDocument().getId();
-//                            Toast.makeText(getContext(), id, Toast.LENGTH_SHORT).show();
-
-                            ReminderModel reminderModel = documentChange.getDocument().toObject(ReminderModel.class).withId(id);
-
-//                            Toast.makeText(getContext(), documentChange.getDocument().getString("task"), Toast.LENGTH_SHORT).show();
-
-                            showData();
+                            siTraerDB = true;
                         }
                     }
+                    if (siTraerDB) {
+                        showData();
+                    }
                 });
-//        showData();
     }
 
     @Override
@@ -161,22 +158,6 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
                     } catch (Exception e) {
                         Toast.makeText(getContext(), e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
-
-
-
-
-
-                    // Para determinar que no se dupliquen elementos al actualizar
-//                    List<String> listaIds = new ArrayList<>();
-//                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-//                        mList.forEach(documento -> {
-//                            listaIds.add(documento.TaskId);
-//
-//                        });
-//                    }
-//
-//                    mList.add(reminderModel);  // se aniade el elemento a la lista del adaptador
-//                    adapter.notifyDataSetChanged();  // el adaptador actualiza su respectivo recyclerview
                 }
 
                 if (mList.isEmpty()) {
@@ -221,8 +202,23 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
 
 
                                 // Formateando la fecha y hora de la notificacion
-                                SimpleDateFormat simpleDateFormat =
-                                        new SimpleDateFormat("EEEE d 'de' MMMM 'de' yyyy 'a las' h:mm a", Locale.getDefault());
+                                SimpleDateFormat simpleDateFormat;
+                                String idioma = Locale.getDefault().getLanguage();
+                                switch (idioma) {
+                                    case "es":
+                                        simpleDateFormat = new SimpleDateFormat("EEEE d 'de' MMMM 'de' yyyy 'a las' h:mm a", Locale.getDefault()); // formato para español
+                                        break;
+                                    case "en":
+                                        simpleDateFormat = new SimpleDateFormat("EEEE, MMMM d, yyyy 'at' h:mm a", Locale.getDefault()); // formato para ingles
+                                        break;
+                                    case "pt":
+                                        simpleDateFormat = new SimpleDateFormat("EEEE, d 'de' MMMM 'de' yyyy 'às' h:mm a", Locale.getDefault()); // formato para portugues
+                                        break;
+                                    default:
+                                        simpleDateFormat = new SimpleDateFormat("EEEE d 'de' MMMM 'de' yyyy 'a las' h:mm a", Locale.getDefault()); // formato para otros idiomas
+                                        break;
+                                }
+
                                 String fechaHoraSeleccionada = simpleDateFormat.format(calendario.getTime());
 
                                 // Actualizando el recordatorio
@@ -232,14 +228,14 @@ public class RecordatoriosFragment extends Fragment implements ReminderAdapter.O
                                             .update("reminder", fechaHoraSeleccionada).addOnSuccessListener(new OnSuccessListener<Void>() {
                                                 @Override
                                                 public void onSuccess(Void unused) {
-                                                    Toast.makeText(getContext(), "Se programó una notificación", Toast.LENGTH_SHORT).show();
+                                                    Toast.makeText(getContext(), R.string.se_program_una_notificaci_n, Toast.LENGTH_SHORT).show();
 
                                                     cancelAlarm(reminderModel.getIdInt()); // si existe una notificacion previa, la borra para solo tener una
 
                                                     // estableciendo la notificacion
                                                     Bundle notificationBundle = new Bundle();
                                                     notificationBundle.putString("Title", reminderModel.getTitulo());
-                                                    notificationBundle.putString("Description", "Actividad agendada para el " + reminderModel.getFecha());
+                                                    notificationBundle.putString("Description", getString(R.string.actividad_agendada_para_el) + reminderModel.getFecha());
                                                     notificationBundle.putInt("id", reminderModel.getIdInt());
 
                                                     setAlarm(calendario, notificationBundle, reminderModel.getIdInt());

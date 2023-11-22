@@ -38,13 +38,6 @@ public class SesionFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         //Configurando los botones de la interfaz
-//        Button addBtn = view.findViewById(R.id.btnAdd);
-//        addBtn.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                setTimeFunction();
-//            }
-//        });
         TextView tvTimeLeft = getView().findViewById(R.id.tvTimeLeft);
         tvTimeLeft.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -89,7 +82,7 @@ public class SesionFragment extends Fragment {
             timePause();
             startTimer(pauseOffSet);
 
-            Toast.makeText(getContext(), "1 minuto añadido", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string._1_minuto_a_adido, Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -103,7 +96,7 @@ public class SesionFragment extends Fragment {
                 timeCountDown = null;
 
                 Button startBtn = getView().findViewById(R.id.btnPlayPause);
-                startBtn.setText("Comenzar");
+                startBtn.setText(R.string.comenzar);
                 isStart = true;
 
                 ProgressBar progressBar = getView().findViewById(R.id.pbTimer);
@@ -140,19 +133,18 @@ public class SesionFragment extends Fragment {
 
         if (timeSelected > timeProgress) {
             if (isStart) {
-                startBtn.setText("Pausar");
+                startBtn.setText(R.string.pausar);
                 startTimer(pauseOffSet);
                 isStart = false;
             } else {
                 isStart = true;
-                startBtn.setText("Reanudar");
+                startBtn.setText(R.string.reanudar);
                 timePause();
             }
         } else {
-            Toast.makeText(getContext(), "Ingrese un tiempo", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.ingrese_un_tiempo, Toast.LENGTH_SHORT).show();
         }
     }
-
 
     private void startTimer(long pauseOffSetL) {
         ProgressBar progressBar = getView().findViewById(R.id.pbTimer);
@@ -161,20 +153,11 @@ public class SesionFragment extends Fragment {
             timeCountDown = new CountDownTimer( ((long) (timeSelected * 1000)) - pauseOffSetL * 1000, 1000 ) {
             @Override
             public void onTick(long p0) {
-                // TODO: Original
-//                timeProgress++;
-//                pauseOffSet = ((long) timeSelected) - p0/1000;
-//                progressBar.setProgress(timeSelected - timeProgress);
-//
-//                TextView timeLeftTv = getView().findViewById(R.id.tvTimeLeft);
-//                timeLeftTv.setText(String.valueOf(timeSelected - timeProgress));
-
                 timeProgress++;
                 pauseOffSet = ((long) timeSelected) - p0/1000;
                 int minutos = (int) (p0 / 1000) / 60;
                 int segundos = (int) (p0 / 1000) % 60;
                 progressBar.setProgress(timeSelected - timeProgress);
-
 
                 TextView timeLeftTv = getView().findViewById(R.id.tvTimeLeft);
                 timeLeftTv.setText(String.valueOf(String.format("%02d:%02d", minutos, segundos)));  // texto mostrando tiempo restante
@@ -183,7 +166,7 @@ public class SesionFragment extends Fragment {
             @Override
             public void onFinish() {
                 resetTime();
-                Toast.makeText(getContext(), "Finalizó", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.finaliz, Toast.LENGTH_SHORT).show();
                 MediaPlayer sonido = MediaPlayer.create(getContext(), R.raw.alarm);
 
                 if (sonido.isPlaying()) {
@@ -212,13 +195,13 @@ public class SesionFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if (timeSet.getText().toString().isEmpty()) {
-                    Toast.makeText(getContext(), "Ingrese un tiempo", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(), R.string.txt_ingrese_un_tiempo, Toast.LENGTH_SHORT).show();
                 } else {
                     try {
                         resetTime();
                         int minutos = Integer.parseInt(timeSet.getText().toString());
                         timeLeftTv.setText(String.format("%d:%02d", minutos, 0));
-                        btnStart.setText("Comenzar");
+                        btnStart.setText(R.string.txt_comenzar);
                         timeSelected = Integer.parseInt(timeSet.getText().toString()) * 60;
                         progressBar.setMax(timeSelected);
                     } catch (Exception e) {
